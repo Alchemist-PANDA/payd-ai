@@ -133,12 +133,18 @@ export class CsvIngestionService {
       });
 
       if (linkErr) {
+        const failureReason = linkErr.code === '23505'
+          ? 'duplicate_primary_contact_link'
+          : 'contact_link_insert_failed';
+
         await InvoicesService.createAuditLog(accountId, 'invoice.import.failed', 'invoice', newInvoice.id, {
-          reason: 'missing_or_invalid_contact_link',
+          reason: failureReason,
           invoice_number: data.invoice_number,
-          error: linkErr.message
+          contact_id: contactId,
+          error_code: linkErr.code,
+          error_message: linkErr.message
         });
-        throw linkErr;
+        throw new Error(`Contact link failed for invoice ${data.invoice_number}: ${failureReason} (${linkErr.message})`);
       }
 
       // 4. Audit Log
@@ -158,14 +164,20 @@ export class CsvIngestionService {
 
         await InvoicesService.createAuditLog(accountId, 'queue.auto_generated', 'invoice', newInvoice.id, {
           source: 'csv_import',
-          action_type: 'send_email'
+          action_type: 'send_email',
+          invoice_number: data.invoice_number
         });
 
         queueItemsCreated += 1;
       } catch (queueErr: any) {
+        const errorMessage = queueErr?.message || 'Unknown queue generation error';
+        console.error(`[Ingestion] Queue auto-generation failed for invoice ${data.invoice_number}:`, errorMessage);
+
         await InvoicesService.createAuditLog(accountId, 'queue.auto_generation_failed', 'invoice', newInvoice.id, {
           source: 'csv_import',
-          error: queueErr?.message || 'Unknown queue generation error'
+          invoice_number: data.invoice_number,
+          error_message: errorMessage,
+          error_stack: queueErr?.stack?.substring(0, 500)
         });
       }
     }

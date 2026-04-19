@@ -157,8 +157,11 @@ export class ReminderSchedulerService {
           { stage_label: stage.label, overdue_days: overdueDays }
         );
         await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.skipped', 'invoice', invoice.id, {
-          reason: 'paid_or_void',
+          skip_reason: 'paid_or_void',
+          invoice_number: invoice.invoice_number,
+          invoice_status: invoice.status,
           stage: stage.stage,
+          stage_label: stage.label,
           overdue_days: overdueDays
         });
         continue;
@@ -176,9 +179,12 @@ export class ReminderSchedulerService {
       if (activePromises && activePromises.length > 0) {
         result.skipped_promise += 1;
         await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.skipped', 'invoice', invoice.id, {
-          reason: 'active_promise',
+          skip_reason: 'active_promise',
+          invoice_number: invoice.invoice_number,
           stage: stage.stage,
-          overdue_days: overdueDays
+          stage_label: stage.label,
+          overdue_days: overdueDays,
+          promise_id: activePromises[0].id
         });
         await this.insertSchedulerStateIfAbsent(
           accountId,
@@ -204,9 +210,12 @@ export class ReminderSchedulerService {
       if (disputes && disputes.length > 0) {
         result.skipped_dispute += 1;
         await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.skipped', 'invoice', invoice.id, {
-          reason: 'dispute_exists',
+          skip_reason: 'dispute_exists',
+          invoice_number: invoice.invoice_number,
           stage: stage.stage,
-          overdue_days: overdueDays
+          stage_label: stage.label,
+          overdue_days: overdueDays,
+          dispute_queue_item_id: disputes[0].id
         });
         await this.insertSchedulerStateIfAbsent(
           accountId,
@@ -243,8 +252,10 @@ export class ReminderSchedulerService {
         if (isUniqueConflict) {
           result.skipped_idempotent += 1;
           await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.skipped', 'invoice', invoice.id, {
-            reason: 'idempotent_conflict',
+            skip_reason: 'idempotent_conflict',
+            invoice_number: invoice.invoice_number,
             stage: stage.stage,
+            stage_label: stage.label,
             overdue_days: overdueDays
           });
           continue;
@@ -253,8 +264,12 @@ export class ReminderSchedulerService {
         // Non-unique insert errors are treated as scheduler errors
         result.errors.push({ invoice_id: invoice.id, error: schedulerStateInsert.error.message });
         await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.error', 'invoice', invoice.id, {
-          error: schedulerStateInsert.error.message,
+          error_type: 'scheduler_state_insert_failed',
+          error_message: schedulerStateInsert.error.message,
+          error_code: schedulerStateInsert.error.code,
+          invoice_number: invoice.invoice_number,
           stage: stage.stage,
+          stage_label: stage.label,
           overdue_days: overdueDays
         });
         continue;
@@ -266,8 +281,11 @@ export class ReminderSchedulerService {
       if (!primaryContact) {
         result.errors.push({ invoice_id: invoice.id, error: 'No linked contact found' });
         await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.error', 'invoice', invoice.id, {
-          error: 'No linked contact found',
+          error_type: 'missing_primary_contact',
+          error_message: 'No linked contact found',
+          invoice_number: invoice.invoice_number,
           stage: stage.stage,
+          stage_label: stage.label,
           overdue_days: overdueDays
         });
         await supabase.from('scheduler_state').upsert({
@@ -276,7 +294,7 @@ export class ReminderSchedulerService {
           stage: stage.stage,
           status: 'failed',
           reason: 'missing_contact',
-          metadata: { stage_label: stage.label, overdue_days: overdueDays },
+          metadata: { stage_label: stage.label, overdue_days: overdueDays, invoice_number: invoice.invoice_number },
           updated_at: new Date().toISOString()
         }, { onConflict: 'account_id,invoice_id,stage' });
         continue;
@@ -322,6 +340,7 @@ export class ReminderSchedulerService {
         await InvoicesService.createAuditLog(accountId, 'scheduler.stage.triggered', 'invoice', invoice.id, {
           stage: stage.stage,
           stage_label: stage.label,
+          invoice_number: invoice.invoice_number,
           overdue_days: overdueDays,
           action_type: 'send_email',
           queue_item_id: queueItem?.id || null
@@ -329,7 +348,8 @@ export class ReminderSchedulerService {
 
         result.triggered_actions += 1;
       } catch (err: any) {
-        result.errors.push({ invoice_id: invoice.id, error: err?.message || 'Unknown scheduler trigger error' });
+        const errorMessage = err?.message || 'Unknown scheduler trigger error';
+        result.errors.push({ invoice_id: invoice.id, error: errorMessage });
 
         await supabase
           .from('scheduler_state')
@@ -339,15 +359,20 @@ export class ReminderSchedulerService {
             metadata: {
               stage_label: stage.label,
               overdue_days: overdueDays,
-              error: err?.message || 'Unknown scheduler trigger error'
+              invoice_number: invoice.invoice_number,
+              error_message: errorMessage,
+              error_stack: err?.stack?.substring(0, 500)
             },
             updated_at: new Date().toISOString()
           })
           .eq('id', schedulerState?.id);
 
         await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.error', 'invoice', invoice.id, {
-          error: err?.message || 'Unknown scheduler trigger error',
+          error_type: 'queue_trigger_failed',
+          error_message: errorMessage,
+          invoice_number: invoice.invoice_number,
           stage: stage.stage,
+          stage_label: stage.label,
           overdue_days: overdueDays
         });
       }

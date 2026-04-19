@@ -192,7 +192,7 @@ describe('ReminderSchedulerService scheduler_state lifecycle', () => {
       'scheduler.invoice.skipped',
       'invoice',
       invoiceId,
-      expect.objectContaining({ reason: 'idempotent_conflict' })
+      expect.objectContaining({ skip_reason: 'idempotent_conflict' })
     );
   });
 });

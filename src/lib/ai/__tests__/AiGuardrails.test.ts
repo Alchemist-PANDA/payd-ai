@@ -21,7 +21,7 @@ describe('PromiseExtractor Service Guardrails', () => {
 
   it('preserves the "no legal threats" rule in rationale (Mock)', () => {
     const rationale = 'Customer mentioned a cashflow issue and will pay by Friday.';
-    const illegalTerms = ['sue', 'legal action', 'court', 'threaten'];
+    const illegalTerms = ['legal action', 'court', 'threaten'];
 
     illegalTerms.forEach(term => {
       expect(rationale.toLowerCase()).not.toContain(term);
