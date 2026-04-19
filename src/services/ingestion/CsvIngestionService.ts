@@ -80,20 +80,74 @@ export class CsvIngestionService {
       const data = row.data as InvoiceImport;
       const amountCents = Math.round(data.amount * 100);
 
-      // 1. Get/Create Contact
+      // 1. Get/Create Contact - Production-grade matching logic
       let contactId: UUID;
       let contactRecord: any;
-      const { data: existingContact } = await supabase
-        .from('contacts')
-        .select('id, account_id, name, email, phone')
-        .eq('account_id', accountId)
-        .eq('name', data.contact_name)
-        .single();
 
-      if (existingContact) {
-        contactId = existingContact.id;
-        contactRecord = existingContact;
+      // STEP 1: Try to match by email (primary identifier)
+      // Email is the most reliable identifier for a person
+      let matchedContact = null;
+
+      if (data.contact_email) {
+        const { data: emailMatch, error: emailError } = await supabase
+          .from('contacts')
+          .select('id, account_id, name, email, phone')
+          .eq('account_id', accountId)
+          .eq('email', data.contact_email)
+          .maybeSingle();
+
+        if (emailError) throw emailError;
+
+        if (emailMatch) {
+          // Found exact email match - this is the same person
+          matchedContact = emailMatch;
+          console.log(`[Ingestion] Matched contact by email: ${data.contact_email}`);
+        }
+      }
+
+      // STEP 2: If no email match, try name matching (secondary, with safety checks)
+      if (!matchedContact && data.contact_name) {
+        const { data: nameMatches, error: nameError } = await supabase
+          .from('contacts')
+          .select('id, account_id, name, email, phone')
+          .eq('account_id', accountId)
+          .eq('name', data.contact_name);
+
+        if (nameError) throw nameError;
+
+        if (nameMatches && nameMatches.length === 1) {
+          const singleMatch = nameMatches[0];
+
+          // Additional safety: check email consistency
+          if (data.contact_email && singleMatch.email && data.contact_email !== singleMatch.email) {
+            // Name matches but email is different - this is a different person or email changed
+            console.warn(
+              `[Ingestion] Name match found but email differs: ` +
+              `"${data.contact_name}" has email ${singleMatch.email} in DB but ${data.contact_email} in CSV. ` +
+              `Creating new contact to avoid wrong email address.`
+            );
+            // Fall through to create new contact (matchedContact stays null)
+          } else {
+            // Name matches and email is consistent (or missing) - safe to reuse
+            matchedContact = singleMatch;
+            console.log(`[Ingestion] Matched contact by name (single match): ${data.contact_name}`);
+          }
+        } else if (nameMatches && nameMatches.length > 1) {
+          // Multiple contacts with same name - ambiguous, cannot safely reuse
+          console.warn(
+            `[Ingestion] Ambiguous contact match: ${nameMatches.length} contacts named "${data.contact_name}". ` +
+            `Creating new contact to avoid wrong email address.`
+          );
+          // Fall through to create new contact
+        }
+      }
+
+      // STEP 3: Use matched contact or create new one
+      if (matchedContact) {
+        contactId = matchedContact.id;
+        contactRecord = matchedContact;
       } else {
+        // No match found - create new contact
         const { data: newContact, error: cErr } = await supabase
           .from('contacts')
           .insert({
@@ -103,9 +157,11 @@ export class CsvIngestionService {
           })
           .select('id, account_id, name, email, phone')
           .single();
+
         if (cErr) throw cErr;
         contactId = newContact.id;
         contactRecord = newContact;
+        console.log(`[Ingestion] Created new contact: ${data.contact_name} <${data.contact_email || 'no email'}>`);
       }
 
       // 2. Insert Invoice
