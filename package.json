@@ -11,7 +11,8 @@
     "test": "vitest run",
     "validate-schema": "echo \"Placeholder: Validates local schema against prod\" && exit 0",
     "check-env": "node scripts/check-env.js",
-    "scheduler:run": "tsx scripts/run-reminder-scheduler.ts"
+    "scheduler:run": "tsx scripts/run-reminder-scheduler.ts",
+    "validate:usage": "tsx scripts/validate-real-usage.ts"
   },
   "dependencies": {
     "next": "14.2.1",

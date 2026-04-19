@@ -1,0 +1,4 @@
+invoice_number,amount,currency,due_date,issued_date,contact_name,contact_email
+INV-2001,500.00,USD,2026-04-19,2026-04-10,Sarah Miller,sarah@startup.io
+INV-2002,1200.00,USD,2026-04-19,2026-04-05,Mike Davis,mike@consulting.com
+INV-2003,800.00,USD,2026-04-19,2026-04-01,Lisa Anderson,lisa@agency.com

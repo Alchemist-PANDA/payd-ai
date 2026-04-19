@@ -1,0 +1,6 @@
+invoice_number,amount,currency,due_date,issued_date,contact_name,contact_email
+INV-1001,1500.00,USD,2026-04-19,2026-04-01,John Smith,john@acmecorp.com
+INV-1002,2500.00,USD,2026-04-16,2026-04-01,Jane Doe,jane@techstart.com
+INV-1003,750.00,USD,2026-04-12,2026-03-28,Bob Wilson,bob@retailco.com
+INV-1004,3200.00,USD,2026-04-05,2026-03-20,Alice Johnson,alice@manufacturing.com
+INV-1005,950.00,USD,2026-04-22,2026-04-05,Charlie Brown,charlie@services.com

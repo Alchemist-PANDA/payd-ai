@@ -1,0 +1,6 @@
+invoice_number,amount,currency,due_date,issued_date,contact_name,contact_email
+INV-5001,1500.00,USD,2026-04-25,2026-04-10,John Smith,john@acmecorp.com
+INV-5002,2500.00,USD,2026-04-22,2026-04-08,John Smith,john@acmecorp.com
+INV-5003,750.00,USD,2026-04-20,2026-04-05,Jane Doe,jane@techstart.com
+INV-5004,3200.00,USD,2026-04-18,2026-04-03,Jane Doe,jane@techstart.com
+INV-5005,950.00,USD,2026-04-15,2026-04-01,Jane Doe,jane@techstart.com

@@ -1,0 +1,8 @@
+invoice_number,amount,currency,due_date,issued_date,contact_name,contact_email
+INV-4001,1500.00,USD,2026-04-25,2026-04-10,Valid Contact,valid@company.com
+INV-4002,2000.00,USD,2026-04-20,2026-04-05,,missing@email.com
+INV-4003,750.00,INVALID,2026-04-22,2026-04-08,Bad Currency,currency@test.com
+INV-4004,-500.00,USD,2026-04-18,2026-04-03,Negative Amount,negative@test.com
+INV-4005,1200.00,USD,2026-03-01,2026-04-15,Future Issue Date,future@test.com
+INV-4006,900.00,USD,2026-04-30,2026-04-12,Valid Contact 2,valid2@company.com
+,1000.00,USD,2026-04-28,2026-04-10,Missing Invoice Number,missing@invoice.com
