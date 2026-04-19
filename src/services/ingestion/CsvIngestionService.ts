@@ -80,20 +80,25 @@ export class CsvIngestionService {
       const data = row.data as InvoiceImport;
       const amountCents = Math.round(data.amount * 100);
 
-      // 1. Get/Create Contact - Production-grade matching logic
+      // 1. Get/Create Contact - Production-grade matching logic with hardening
       let contactId: UUID;
       let contactRecord: any;
+      let matchStrategy: 'email' | 'name' | 'created' = 'created';
+      let matchReason: string | null = null;
+
+      // Normalize email for reliable matching
+      const normalizedEmail = data.contact_email?.trim().toLowerCase() || null;
 
       // STEP 1: Try to match by email (primary identifier)
       // Email is the most reliable identifier for a person
       let matchedContact = null;
 
-      if (data.contact_email) {
+      if (normalizedEmail) {
         const { data: emailMatch, error: emailError } = await supabase
           .from('contacts')
           .select('id, account_id, name, email, phone')
           .eq('account_id', accountId)
-          .eq('email', data.contact_email)
+          .eq('email', normalizedEmail)
           .maybeSingle();
 
         if (emailError) throw emailError;
@@ -101,7 +106,8 @@ export class CsvIngestionService {
         if (emailMatch) {
           // Found exact email match - this is the same person
           matchedContact = emailMatch;
-          console.log(`[Ingestion] Matched contact by email: ${data.contact_email}`);
+          matchStrategy = 'email';
+          console.log(`[Ingestion] Matched contact by email: ${normalizedEmail}`);
         }
       }
 
@@ -119,27 +125,35 @@ export class CsvIngestionService {
           const singleMatch = nameMatches[0];
 
           // Additional safety: check email consistency
-          if (data.contact_email && singleMatch.email && data.contact_email !== singleMatch.email) {
+          if (normalizedEmail && singleMatch.email && normalizedEmail !== singleMatch.email) {
             // Name matches but email is different - this is a different person or email changed
+            matchReason = 'email_mismatch';
             console.warn(
               `[Ingestion] Name match found but email differs: ` +
-              `"${data.contact_name}" has email ${singleMatch.email} in DB but ${data.contact_email} in CSV. ` +
+              `"${data.contact_name}" has email ${singleMatch.email} in DB but ${normalizedEmail} in CSV. ` +
               `Creating new contact to avoid wrong email address.`
             );
             // Fall through to create new contact (matchedContact stays null)
           } else {
             // Name matches and email is consistent (or missing) - safe to reuse
             matchedContact = singleMatch;
+            matchStrategy = 'name';
             console.log(`[Ingestion] Matched contact by name (single match): ${data.contact_name}`);
           }
         } else if (nameMatches && nameMatches.length > 1) {
           // Multiple contacts with same name - ambiguous, cannot safely reuse
+          matchReason = 'ambiguous';
           console.warn(
             `[Ingestion] Ambiguous contact match: ${nameMatches.length} contacts named "${data.contact_name}". ` +
             `Creating new contact to avoid wrong email address.`
           );
           // Fall through to create new contact
+        } else {
+          // No name matches
+          matchReason = 'no_match';
         }
+      } else if (!matchedContact && !data.contact_name) {
+        matchReason = 'no_match';
       }
 
       // STEP 3: Use matched contact or create new one
@@ -153,7 +167,7 @@ export class CsvIngestionService {
           .insert({
             account_id: accountId,
             name: data.contact_name,
-            email: data.contact_email || null
+            email: normalizedEmail
           })
           .select('id, account_id, name, email, phone')
           .single();
@@ -161,7 +175,7 @@ export class CsvIngestionService {
         if (cErr) throw cErr;
         contactId = newContact.id;
         contactRecord = newContact;
-        console.log(`[Ingestion] Created new contact: ${data.contact_name} <${data.contact_email || 'no email'}>`);
+        console.log(`[Ingestion] Created new contact: ${data.contact_name} <${normalizedEmail || 'no email'}>`);
       }
 
       // 2. Insert Invoice
@@ -203,10 +217,14 @@ export class CsvIngestionService {
         throw new Error(`Contact link failed for invoice ${data.invoice_number}: ${failureReason} (${linkErr.message})`);
       }
 
-      // 4. Audit Log
+      // 4. Audit Log with matching metadata
       await InvoicesService.createAuditLog(accountId, 'invoice.import', 'invoice', newInvoice.id, {
         import_row: row.row_index,
-        invoice_number: data.invoice_number
+        invoice_number: data.invoice_number,
+        contact_match_strategy: matchStrategy,
+        contact_match_reason: matchReason,
+        contact_id: contactId,
+        contact_email_normalized: normalizedEmail
       });
 
       // 5. AUTO-TRIGGER Queue generation (review-first)
