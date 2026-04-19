@@ -616,6 +616,157 @@ async function printResults() {
   console.log('='.repeat(80));
 }
 
+async function scenario9_PromiseBlocking(accountId: string) {
+  console.log('\n=== SCENARIO 9: Promise Blocking ===');
+  const result: ValidationResult = {
+    scenario: 'Create active promise and ensure scheduler skips invoice',
+    success: false,
+    observations: [],
+    friction_points: [],
+    unexpected_behaviors: []
+  };
+
+  try {
+    // 1. Create test invoice
+    const invNo = `INV-PROMISE-${Date.now()}`;
+    const { data: inv, error: invErr } = await supabase
+      .from('invoices')
+      .insert({
+        account_id: accountId,
+        invoice_number: invNo,
+        amount_cents: 100000,
+        currency: 'USD',
+        due_date: '2026-04-01',
+        issued_date: '2026-03-20',
+        status: 'overdue'
+      })
+      .select('id')
+      .single();
+
+    if (invErr) throw invErr;
+    result.observations.push(`Created overdue invoice ${invNo}`);
+
+    // 2. Create contact link (enforced)
+    const { data: contact } = await supabase.from('contacts').select('id').eq('account_id', accountId).limit(1).single();
+    await supabase.from('invoice_contact_links').insert({
+      account_id: accountId,
+      invoice_id: inv.id,
+      contact_id: contact.id,
+      contact_type: 'primary'
+    });
+
+    // 3. Create active promise
+    await supabase.from('promises').insert({
+      account_id: accountId,
+      invoice_id: inv.id,
+      contact_id: contact.id,
+      promised_date: '2026-05-01',
+      status: 'active'
+    });
+    result.observations.push('Created active promise for invoice');
+
+    // 4. Run scheduler
+    const schedulerResult = await ReminderSchedulerService.runForAccount(accountId);
+    result.observations.push(`Scheduler result: skipped_promise=${schedulerResult.skipped_promise}`);
+
+    // 5. Verify scheduler_state
+    const { data: state } = await supabase
+      .from('scheduler_state')
+      .select('status, reason')
+      .eq('invoice_id', inv.id)
+      .single();
+
+    result.observations.push(`Scheduler state: status=${state?.status}, reason=${state?.reason}`);
+
+    if (state?.status !== 'skipped' || state?.reason !== 'active_promise') {
+      result.unexpected_behaviors.push(`Expected skipped/active_promise, got ${state?.status}/${state?.reason}`);
+    } else {
+      result.success = true;
+    }
+  } catch (err: any) {
+    result.observations.push(`ERROR: ${err.message}`);
+    result.friction_points.push(`Scenario failed: ${err.message}`);
+  }
+
+  results.push(result);
+}
+
+async function scenario10_DisputeBlocking(accountId: string) {
+  console.log('\n=== SCENARIO 10: Dispute Blocking ===');
+  const result: ValidationResult = {
+    scenario: 'Create dispute queue item and ensure scheduler blocks',
+    success: false,
+    observations: [],
+    friction_points: [],
+    unexpected_behaviors: []
+  };
+
+  try {
+    // 1. Create test invoice
+    const invNo = `INV-DISPUTE-${Date.now()}`;
+    const { data: inv, error: invErr } = await supabase
+      .from('invoices')
+      .insert({
+        account_id: accountId,
+        invoice_number: invNo,
+        amount_cents: 100000,
+        currency: 'USD',
+        due_date: '2026-04-01',
+        issued_date: '2026-03-20',
+        status: 'overdue'
+      })
+      .select('id')
+      .single();
+
+    if (invErr) throw invErr;
+    result.observations.push(`Created overdue invoice ${invNo}`);
+
+    // 2. Create contact link (enforced)
+    const { data: contact } = await supabase.from('contacts').select('id').eq('account_id', accountId).limit(1).single();
+    await supabase.from('invoice_contact_links').insert({
+      account_id: accountId,
+      invoice_id: inv.id,
+      contact_id: contact.id,
+      contact_type: 'primary'
+    });
+
+    // 3. Create dispute in queue
+    await supabase.from('action_queue').insert({
+      account_id: accountId,
+      invoice_id: inv.id,
+      contact_id: contact.id,
+      action_type: 'dispute_review',
+      status: 'pending_review',
+      payload: { classification: { category: 'dispute' } }
+    });
+    result.observations.push('Created dispute item in Action Queue');
+
+    // 4. Run scheduler
+    const schedulerResult = await ReminderSchedulerService.runForAccount(accountId);
+    result.observations.push(`Scheduler result: skipped_dispute=${schedulerResult.skipped_dispute}`);
+
+    // 5. Verify scheduler_state
+    const { data: state } = await supabase
+      .from('scheduler_state')
+      .select('status, reason')
+      .eq('invoice_id', inv.id)
+      .single();
+
+    result.observations.push(`Scheduler state: status=${state?.status}, reason=${state?.reason}`);
+
+    if (state?.status !== 'skipped' || state?.reason !== 'dispute_exists') {
+      result.unexpected_behaviors.push(`Expected skipped/dispute_exists, got ${state?.status}/${state?.reason}`);
+    } else {
+      result.success = true;
+    }
+  } catch (err: any) {
+    result.observations.push(`ERROR: ${err.message}`);
+    result.friction_points.push(`Scenario failed: ${err.message}`);
+  }
+
+  results.push(result);
+}
+
 async function main() {
   console.log('Starting Real Usage Validation...\n');
   console.log('Current time: 2026-04-19T09:41:54.980Z');
@@ -633,6 +784,8 @@ async function main() {
     await scenario6_LargeAmountsOverdue(accountId);
     await scenario7_ActionQueueInteraction(accountId);
     await scenario8_SchedulerIdempotency(accountId);
+    await scenario9_PromiseBlocking(accountId);
+    await scenario10_DisputeBlocking(accountId);
 
     await printResults();
   } catch (err: any) {

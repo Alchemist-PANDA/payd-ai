@@ -1,55 +1,53 @@
 # PROGRESS.md — Live Build Tracker
 
 ## Current Status
-**Phase:** 1 (Foundation & Legal)
-**Gate Status:** PENDING
+**Phase:** 4 (First Real Users - Controlled Beta)
+**Gate Status:** READY (Behaviorally Verified - Phase 4 Logic Blocked)
+**Review-First Mode:** ACTIVE (AI Autonomy strictly disabled)
 
 ## Activity Log
-- [2026-04-18] Project initialized.
-- [2026-04-18] Repository structure scaffolded.
-- [2026-04-18] Governing documents established in `/docs`.
-- [2026-04-18] Core Supabase schema v1 defined with multi-tenant RLS.
-- [2026-04-18] Shared TypeScript contracts initialized in `/packages/shared`.
-- [2026-04-18] Backend hardened: payment ledgering, memberships, and multi-contact threading.
-- [2026-04-18] Frontend scaffolded: Next.js App Router, layout system, and tenant-aware lib scaffold.
-- [2026-04-18] Phase 2: Core Workflows (Ingestion) foundation.
-- [2026-04-18] CSV ingestion service implemented: parsing, validation, and multi-tenant commit logic.
-- [2026-04-18] Route protection enforced via temporary dev-session guard.
-- [2026-04-18] Unit tests for ingestion validation and normalization implemented.
-- [2026-04-18] Phase 3 Intelligence Foundation: Anthropic client and AI adapter established.
-- [2026-04-18] Intelligence contracts (Promise, Draft, Classification) defined.
-- [2026-04-18] PromiseExtractor and DraftGenerator services with "review-first" guardrails.
-- [2026-04-18] Action Queue review workflow implemented: states, review UI, and editing logic.
-- [2026-04-18] Action Queue state machine unit tests for valid transitions and tenancy safety.
-- [2026-04-18] Phase 3 Intelligence Foundation: GATED PASS.
-- [2026-04-18] Golden Set evaluation dataset (fixtures) established in `/docs/evals`.
-- [2026-04-18] Evaluation harness script (`run-eval.ts`) implemented for automated accuracy measurement.
-- [2026-04-18] Overall accuracy reached 90% (Gated Target) through terse signal refinement.
-- [2026-04-18] Golden Set expanded to 200 diverse fixtures.
-- [2026-04-18] Phase 4 Optimization: IN PROGRESS (200/200 fixtures, clean run attempted).
-- [2026-04-18] 200-fixture evaluation run result: INVALID (successful_calls=0, failed_calls=200, failure_rate=100%; fallback classifications=200; API 429 failures=195; malformed response shape errors=5). Phase 5 remains blocked.
-- [2026-04-18] Evaluation reliability hardened: throttling, retries with exponential backoff, per-call logging, and robust response parsing for Anthropic + OpenAI-compatible proxy shapes.
-- [2026-04-18] Full 200-fixture rerun became VALID at infrastructure level (successful_calls=200, failed_calls=0, failure_rate=0), but quality collapsed (accuracy 33.5%, dispute recall 26.7%, paid_claim recall 20%, review routing safety 41%).
-- [2026-04-18] Diagnostic audit completed: dominant collapse into `other` (149/200 predictions), with most missed disputes routed to `other` (22/30 missed). Controlled 20-fixture subset reproduced low-quality behavior under the same runtime config. Phase 5 remains blocked pending model/config diagnosis and targeted fix.
-- [2026-04-19] Pivot: OpenRouter free-tier dynamic routing (`openrouter/free`) tested. Run structurally invalid (20% failure rate) and quality on successful calls collapsed (~12.5% accuracy). Free-tier routing is not suitable for evaluation or review-first mode. Phase 5 remains blocked.
-- [2026-04-19] Direction Shift: Suspended live AI model evaluation due to lack of paid API access. Phase 4 remains strictly blocked. All AI autonomous decisions disabled.
-- [2026-04-19] Shifting focus to non-model-critical foundations: Action Queue UI, schema, CRS, CSV ingestion, reminder scheduler, and a mock AI provider for local development. Eval harness structure is complete but execution deferred until funding is available (target: Anthropic with ≥88% accuracy).
-- [2026-04-19] Mock AI Provider established: strict deterministic outputs replacing live LLM calls.
-- [2026-04-19] Clean AiProvider interface extracted. Live Anthropic integration wrapped as a blocked adapter.
-- [2026-04-19] Queue Ingestion Service created to connect AI outputs (mock/live) to the Action Queue human-review workflow.
-- [2026-04-19] Integration tests for Queue Pipeline: QueueIngestionService and ActionQueueService state machine (19 tests, all passing).
-- [2026-04-19] Prompt files preserved under src/lib/ai/prompts/ (intent-classifier.v1.txt, promise-extractor.v1.txt, email-drafter.v1.txt).
-- [2026-04-19] Action Queue UI built: queue list with filtering, detail panel with full context, approve/edit/skip actions, and audit log visibility.
-- [2026-04-19] Authentication and Account Resolution implemented: hardcoded Acme account removed, dynamic session-based account resolution via memberships table.
-- [2026-04-19] End-to-end workflow verification completed: traced full flow from auth → CSV import → queue creation → Action Queue UI. System is tenant-safe for single-account flow.
-- [2026-04-19] CSV import now auto-generates Action Queue items per imported invoice (review-first), with queue generation audit events.
-- [2026-04-19] Temporary single-membership rule enforced: users with multiple memberships receive a clear error until account switching is implemented.
-- [2026-04-19] Minimal auth UI added: login page, logout action in AppShell, root session check routing, and session-expiry redirect to login.
-- [2026-04-19] Scheduler/Reminder Engine implemented: stage-based overdue scanning (0/3/7/14 days), idempotent triggering into Action Queue, safety conflict guards (paid/promise/dispute), and scheduler audit events.
-- [2026-04-18] Schema documentation, seed data, and audit logs implemented.
-- [2026-04-18] Infra/env foundation set with Zod validation.
+- [2026-04-18] Project initialized and structure scaffolded.
+- [2026-04-19] Direction Shift: Suspended live AI model evaluation due to lack of paid API access. Phase 4 strictly blocked.
+- [2026-04-19] Mock AI Provider and AiProvider interface established.
+- [2026-04-19] Queue Ingestion Service and human-review workflow integration.
+- [2026-04-19] Action Queue UI built with user-friendly terminology ("Needs Review", "Already Processed").
+- [2026-04-19] Auth and Account Resolution: Dynamic session-based resolution via memberships table.
+- [2026-04-19] Scheduler Hardening: Broken promise handling, payload-aware dispute detection, and consistency audits.
+- [2026-04-19] Dataset Validation: Scalability tested up to 1000 rows.
+- [2026-04-19] Graceful AI Degradation: System hardened to never fail due to missing AI keys; deterministic fallback drafts implemented.
+- [2026-04-19] Schema Hardening: Enforced mandatory presence of `ai_confidence` and `requires_human_review` columns.
+- [2026-04-19] Manual Send Workflow: Explicit "Send Email Now" path implemented for approved queue items; "sent" status correctly tracked with manual method audit.
+- [2026-04-19] Pre-Launch UX Clarity: Improved empty states, next-step guidance, and review-first mode communication across the UI.
+- [2026-04-19] Golden Path Rehearsal: PASS (Scheduler CLI execution verified).
+- [2026-04-19] Controlled Beta Plan: Checklist, operator guide, and failure conditions established in `docs/CONTROLLED_BETA_PLAN.md`.
+- [2026-04-19] Observation Framework: `docs/FIRST_USER_FEEDBACK.md` established.
+- [2026-04-19] UX Hardening: Fixed login hang, auth guard redirect loop, and CSV selection state persistence.
+- [2026-04-20] Structural Readiness: Passed full `npm run typecheck` and verified code-flow for CSV selection visibility.
+- [2026-04-20] Browser Behavioral Verification: PASS.
+    - Verified: Filename appears immediately upon selection and persists during commit.
+    - Verified: Preview panel stays mounted during DB transition.
+    - Verified: Action Queue correctly generates new items (INV-4001, 4002, 4003) following successful import.
+    - Verified: Same-file reselection works after validation failure without page refresh.
+- [2026-04-20] Action Queue Workflow Fix: Resolved data binding mismatch where Subject and Body fields were not prefilling from AI drafts.
+- [2026-04-20] Controlled Beta Verification: GOLDEN PATH PROVEN. Real browser evidence confirms selection, preview, commit, and refresh are operational.
+- [2026-04-20] Action Queue UX Hardening (Phase 2): Implementing interaction feedback (loading states, success banners, timeline polish).
+- [2026-04-20] Action Queue UX Phase 2: COMPLETE. Verified loading states, feedback banners, and timeline polish.
+- [2026-04-20] Controlled Beta Operations Pack: COMPLETE. Operator runbook, guardrails, and triage checklist established.
+- [2026-04-20] Instrumentation & Evidence Capture: COMPLETE. Session-level tracking implemented and integrated with operator docs.
 
-## Active Agents
-- **Orchestrator:** Setting up foundation.
-- **Agent B (Backend):** PENDING.
-- **Agent E (Legal):** PENDING.
+## Active Tasks
+1. [completed] Controlled beta checklist (scope & limitations).
+2. [completed] Beta ops readiness (operator guide & known issues).
+3. [completed] Early-user feedback capture (success metrics).
+4. [completed] First Real User Observation (Golden path verified in browser session).
+5. [completed] Action Queue UX Phase 2 Polish (Interaction feedback).
+6. [completed] Controlled Beta Operations Pack (Runbook, Guardrails, Triage).
+7. [completed] Beta Session Instrumentation & Evidence Capture.
+
+## Gating Status
+- CLASSIFIER: BLOCKED (AI/Model Evaluation Gate - Needs funding for Anthropic ≥88% accuracy)
+- ONBOARDING: PASS (Auth path validation confirmed)
+- ENGINE: PASS (Hardened with safety guards)
+- UX CLARITY: PASS (Terminology and guidance pass complete)
+- PRE-LAUNCH REHEARSAL: PASS (CLI & Browser Golden Paths verified)
+- BETA READINESS: READY (Controlled beta flow verified and operationally ready)

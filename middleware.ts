@@ -19,6 +19,9 @@ export function middleware(request: NextRequest) {
   if (isDashboardRoute) {
     const devSession = request.cookies.get('dev-session');
 
+    // Log for debugging
+    console.log(`[Middleware Check] Path: ${pathname}, Dev Session Cookie: ${!!devSession}`);
+
     // TEMPORARY: Allow access only if dev-session cookie is set
     // This prevents public exposure of tenant routes during development
     if (!devSession && process.env.NODE_ENV === 'development') {

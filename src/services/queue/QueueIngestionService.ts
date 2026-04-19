@@ -46,6 +46,13 @@ export class QueueIngestionService {
       .select()
       .single();
 
+    if (error) {
+      if (error.message.includes('ai_confidence') || error.message.includes('requires_human_review')) {
+        throw new Error('Database schema is outdated. Apply migrations (20260419114500_harden_action_queue.sql).');
+      }
+      throw error;
+    }
+
     if (error) throw error;
 
     await InvoicesService.createAuditLog(
@@ -61,6 +68,7 @@ export class QueueIngestionService {
 
   /**
    * Generate a draft email and create a queue item for review/editing.
+   * IMPLEMENTS GRACEFUL DEGRADATION: Never fails due to missing AI keys.
    */
   static async generateDraftAndQueue(
     accountId: UUID,
@@ -68,8 +76,27 @@ export class QueueIngestionService {
     contact: Contact,
     context: string
   ) {
-    const draft = await DraftGeneratorService.generate(invoice, contact, context);
+    let draft;
+    let fallbackUsed = false;
 
+    try {
+      draft = await DraftGeneratorService.generate(invoice, contact, context);
+    } catch (err: any) {
+      console.warn(`[QueueIngestion] AI Draft generation failed, using fallback: ${err.message}`);
+      fallbackUsed = true;
+
+      // PRODUCTION-GRADE FALLBACK SYSTEM
+      // Never throw due to missing AI keys or provider errors
+      draft = {
+        subject: `Reminder: Invoice ${invoice.invoice_number} is ${invoice.status}`,
+        body_text: `Dear ${contact.name},\n\nThis is a reminder regarding invoice ${invoice.invoice_number} for ${(invoice.amount_cents / 100).toFixed(2)} ${invoice.currency}.\n\nAccording to our records, the status of this invoice is currently: ${invoice.status}.\n\nPlease let us know if you have any questions.\n\nBest regards,\nAccounts Receivable`,
+        confidence: 0,
+        rationale: 'fallback_no_ai',
+        source: 'fallback'
+      };
+    }
+
+    // Insert into action_queue for human review
     const { data, error } = await supabase
       .from('action_queue')
       .insert({
@@ -81,7 +108,9 @@ export class QueueIngestionService {
         priority: 5,
         payload: {
           draft,
-          context
+          context,
+          is_fallback: fallbackUsed,
+          fallback_label: fallbackUsed ? 'Auto-generated (no AI)' : null
         },
         ai_confidence: draft.confidence,
         requires_human_review: true
@@ -89,14 +118,32 @@ export class QueueIngestionService {
       .select()
       .single();
 
+    if (error) {
+      if (error.message.includes('ai_confidence') || error.message.includes('requires_human_review')) {
+        throw new Error('Database schema is outdated. Apply migrations (20260419114500_harden_action_queue.sql).');
+      }
+      throw error;
+    }
+
     if (error) throw error;
+
+    // Audit fallback usage for traceability
+    if (fallbackUsed) {
+      await InvoicesService.createAuditLog(
+        accountId,
+        'queue.fallback_used',
+        'action_queue',
+        data.id,
+        { action_type: 'send_email', reason: 'ai_provider_error', invoice_number: invoice.invoice_number }
+      );
+    }
 
     await InvoicesService.createAuditLog(
       accountId,
       'queue_item.created',
       'action_queue',
       data.id,
-      { action_type: 'send_email', invoice_number: invoice.invoice_number }
+      { action_type: 'send_email', invoice_number: invoice.invoice_number, source: fallbackUsed ? 'fallback' : 'ai' }
     );
 
     return data;

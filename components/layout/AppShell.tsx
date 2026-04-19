@@ -14,35 +14,44 @@ export function AppShell({ children }: AppShellProps) {
   const [accountLabel, setAccountLabel] = useState('Loading account...');
 
   useEffect(() => {
+    let mounted = true;
+
     async function checkSessionAndAccount() {
+      // 1. Immediate Session Check
       const session = await getCurrentSession();
+      console.log(`[AppShell] Session check: ${!!session}`);
       if (!session) {
-        router.replace('/login');
+        if (mounted) {
+          console.warn('[AppShell] No session found - Redirecting to /login');
+          router.replace('/login');
+        }
         return;
       }
 
+      // 2. Account Resolution (Non-blocking for children)
       try {
         const account = await getCurrentAccount();
         if (!account) {
-          router.replace('/login');
+          if (mounted) router.replace('/login');
           return;
         }
-        setAccountLabel(`${account.name} (${account.role})`);
-      } catch {
-        router.replace('/login');
+        if (mounted) setAccountLabel(`${account.name} (${account.role})`);
+      } catch (err) {
+        console.error('[AppShell] Account resolution failed:', err);
+        if (mounted) router.replace('/login');
       }
     }
 
     checkSessionAndAccount();
 
-    // Handle session expiry in real-time
-    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        router.replace('/login');
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        if (mounted) router.replace('/login');
       }
     });
 
     return () => {
+      mounted = false;
       authListener.subscription.unsubscribe();
     };
   }, [router]);

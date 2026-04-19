@@ -168,6 +168,7 @@ export class ReminderSchedulerService {
       }
 
       // Safety rule #2: Do not trigger if active promise exists
+      // Broken promises do NOT block the scheduler.
       const { data: activePromises } = await supabase
         .from('promises')
         .select('id, status')
@@ -198,16 +199,22 @@ export class ReminderSchedulerService {
       }
 
       // Safety rule #3: Do not trigger if dispute exists
+      // Logic: Look for action_queue items with status pending_review/approved/edited
+      // and type dispute_review OR classification category 'dispute'.
       const { data: disputes } = await supabase
         .from('action_queue')
-        .select('id')
+        .select('id, action_type, payload')
         .eq('account_id', accountId)
         .eq('invoice_id', invoice.id)
-        .or('action_type.eq.dispute_review,payload->classification->>category.eq.dispute')
-        .in('status', ['pending_review', 'edited', 'approved'])
-        .limit(1);
+        .in('status', ['pending_review', 'edited', 'approved']);
 
-      if (disputes && disputes.length > 0) {
+      // Filter in memory for classification category 'dispute' in payload
+      const activeDispute = disputes?.find(d =>
+        d.action_type === 'dispute_review' ||
+        (d.payload as any)?.classification?.category === 'dispute'
+      );
+
+      if (activeDispute) {
         result.skipped_dispute += 1;
         await InvoicesService.createAuditLog(accountId, 'scheduler.invoice.skipped', 'invoice', invoice.id, {
           skip_reason: 'dispute_exists',
@@ -215,7 +222,7 @@ export class ReminderSchedulerService {
           stage: stage.stage,
           stage_label: stage.label,
           overdue_days: overdueDays,
-          dispute_queue_item_id: disputes[0].id
+          dispute_queue_item_id: activeDispute.id
         });
         await this.insertSchedulerStateIfAbsent(
           accountId,

@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase/client';
 import { InvoiceImportSchema, type InvoiceImport, type UUID } from '../../../packages/shared/src/types/contracts';
 import { InvoicesService } from '../invoices/InvoicesService';
 import { QueueIngestionService } from '../queue/QueueIngestionService';
+import { normalizeEmail } from '../contacts/ContactUtils';
 
 /**
  * CSV INGESTION PIPELINE (Hardened Phase 2)
@@ -86,8 +87,8 @@ export class CsvIngestionService {
       let matchStrategy: 'email' | 'name' | 'created' = 'created';
       let matchReason: string | null = null;
 
-      // Normalize email for reliable matching
-      const normalizedEmail = data.contact_email?.trim().toLowerCase() || null;
+      // Normalize and validate email using shared utility
+      const normalizedEmail = normalizeEmail(data.contact_email);
 
       // STEP 1: Try to match by email (primary identifier)
       // Email is the most reliable identifier for a person
@@ -162,20 +163,62 @@ export class CsvIngestionService {
         contactRecord = matchedContact;
       } else {
         // No match found - create new contact
-        const { data: newContact, error: cErr } = await supabase
-          .from('contacts')
-          .insert({
-            account_id: accountId,
-            name: data.contact_name,
-            email: normalizedEmail
-          })
-          .select('id, account_id, name, email, phone')
-          .single();
+        // Handle race condition: another process may have created same email contact
+        let createAttempts = 0;
+        const maxAttempts = 2;
 
-        if (cErr) throw cErr;
-        contactId = newContact.id;
-        contactRecord = newContact;
-        console.log(`[Ingestion] Created new contact: ${data.contact_name} <${normalizedEmail || 'no email'}>`);
+        while (createAttempts < maxAttempts) {
+          const { data: newContact, error: cErr } = await supabase
+            .from('contacts')
+            .insert({
+              account_id: accountId,
+              name: data.contact_name,
+              email: normalizedEmail
+            })
+            .select('id, account_id, name, email, phone')
+            .single();
+
+          if (!cErr) {
+            // Success - contact created
+            contactId = newContact.id;
+            contactRecord = newContact;
+            console.log(`[Ingestion] Created new contact: ${data.contact_name} <${normalizedEmail || 'no email'}>`);
+            break;
+          }
+
+          // Check if error is unique constraint violation on email
+          if (cErr.code === '23505' && normalizedEmail && createAttempts === 0) {
+            // Race condition: another process created contact with same email
+            // Retry by fetching the existing contact
+            console.log(`[Ingestion] Race condition detected - contact with email ${normalizedEmail} was created concurrently. Retrying...`);
+
+            const { data: raceContact, error: raceError } = await supabase
+              .from('contacts')
+              .select('id, account_id, name, email, phone')
+              .eq('account_id', accountId)
+              .eq('email', normalizedEmail)
+              .maybeSingle();
+
+            if (!raceError && raceContact) {
+              // Found the contact that was created concurrently
+              contactId = raceContact.id;
+              contactRecord = raceContact;
+              matchStrategy = 'email';
+              console.log(`[Ingestion] Resolved race condition - using existing contact: ${normalizedEmail}`);
+              break;
+            }
+
+            // If we still can't find it, retry insert once more
+            createAttempts++;
+          } else {
+            // Other error - throw
+            throw cErr;
+          }
+        }
+
+        if (!contactId) {
+          throw new Error(`Failed to create or find contact after ${maxAttempts} attempts`);
+        }
       }
 
       // 2. Insert Invoice
