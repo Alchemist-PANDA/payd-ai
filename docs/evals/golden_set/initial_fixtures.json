@@ -1,0 +1,1802 @@
+[
+  {
+    "id": "f_001",
+    "raw_email_text": "I will pay the full amount of $500 next Friday, April 24th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Standard Promise"
+  },
+  {
+    "id": "f_002",
+    "raw_email_text": "I'm not paying this. You already billed us twice for the same service.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Direct Dispute"
+  },
+  {
+    "id": "f_003",
+    "raw_email_text": "I'll try to get this paid soon, maybe late next week.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Vague Promise"
+  },
+  {
+    "id": "f_004",
+    "raw_email_text": "I'm out of the office until Wednesday. Checking when I return.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_005",
+    "raw_email_text": "Paid this morning via ACH. Reference #9982.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_006",
+    "raw_email_text": "Accounts payable is handling it. They should process it in the next run.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Deflection"
+  },
+  {
+    "id": "f_007",
+    "raw_email_text": "We'll pay once the broken unit is replaced. Until then, the invoice is on hold.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Conditional/Mixed"
+  },
+  {
+    "id": "f_008",
+    "raw_email_text": "Already sent to the bank for processing on Monday the 20th.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_009",
+    "raw_email_text": "Checking on this. Will get back to you.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Neutral"
+  },
+  {
+    "id": "f_010",
+    "raw_email_text": "Done. Payment scheduled for May 1st.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-05-01",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Terse Promise"
+  },
+  {
+    "id": "f_011",
+    "raw_email_text": "Noted. We will review.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Neutral"
+  },
+  {
+    "id": "f_012",
+    "raw_email_text": "The amount is wrong. It should be $400, not $500.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Amount Dispute"
+  },
+  {
+    "id": "f_013",
+    "raw_email_text": "I'll pay $200 tomorrow and the rest by the end of the month.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-19",
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Partial Promise"
+  },
+  {
+    "id": "f_014",
+    "raw_email_text": "I'm on vacation. Contact Sarah for billing.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_015",
+    "raw_email_text": "We already paid this in March. Check your records.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Past Paid"
+  },
+  {
+    "id": "f_016",
+    "raw_email_text": "We need to discuss terms. Can we hop on a call Monday?",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Negotiation"
+  },
+  {
+    "id": "f_017",
+    "raw_email_text": "The invoice was never received until today. We'll process it next week.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Vague/Excuse"
+  },
+  {
+    "id": "f_018",
+    "raw_email_text": "Yes, I recall this. I will send it by EOD Wednesday.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-22",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Standard Promise"
+  },
+  {
+    "id": "f_019",
+    "raw_email_text": "I cannot pay this right now. We are facing cashflow issues.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Financial Hardship"
+  },
+  {
+    "id": "f_020",
+    "raw_email_text": "Okay.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Uninformative"
+  },
+  {
+    "id": "f_021",
+    "raw_email_text": "I'll pay $500 next Tuesday, but why was the late fee so high? Please check.",
+    "expected_classification": "dispute",
+    "expected_promised_date": "2026-04-21",
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Compound: Promise + Dispute"
+  },
+  {
+    "id": "f_022",
+    "raw_email_text": "I'll try to get this done early next week if my client pays me.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Weak Promise"
+  },
+  {
+    "id": "f_023",
+    "raw_email_text": "Payment should be sent soon. We are just waiting on the CFO's signature.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Vague/Internal Process"
+  },
+  {
+    "id": "f_024",
+    "raw_email_text": "I will send $1000 by EOD Friday. \n\nOriginal message:\nFrom: billing@acme.com\nSent: Monday, April 13, 2026\nSubject: Overdue Invoice INV-001",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Quoted Thread Promise"
+  },
+  {
+    "id": "f_025",
+    "raw_email_text": "We've already paid this on the 10th. Check the attached receipt.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_026",
+    "raw_email_text": "I will pay as soon as I can. Please stop emailing me.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Hostile/Vague"
+  },
+  {
+    "id": "f_027",
+    "raw_email_text": "The goods were damaged. I'm not paying until this is resolved. I expect to pay by next month if fixed.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Compound: Dispute + Future Promise"
+  },
+  {
+    "id": "f_028",
+    "raw_email_text": "Noted.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Neutral"
+  },
+  {
+    "id": "f_029",
+    "raw_email_text": "Yes, I will pay $300 on 4/25 and the rest on 5/5.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-25",
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Multi-date Promise"
+  },
+  {
+    "id": "f_030",
+    "raw_email_text": "The bank transfer was initiated. It should be with you in 2-3 days.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Paid/Initiated"
+  },
+  {
+    "id": "f_031",
+    "raw_email_text": "I'll try my best to get this to you by next Tuesday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Vague Promise"
+  },
+  {
+    "id": "f_032",
+    "raw_email_text": "Sent to AP for processing. Should be soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Process Update"
+  },
+  {
+    "id": "f_033",
+    "raw_email_text": "Checking with the CFO for signature. Will update you.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Internal Delay"
+  },
+  {
+    "id": "f_034",
+    "raw_email_text": "I'll pay $400 on Friday, but I still don't agree with the service fee.",
+    "expected_classification": "dispute",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Compound: Promise + Dispute"
+  },
+  {
+    "id": "f_035",
+    "raw_email_text": "Done.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Terse/Vague"
+  },
+  {
+    "id": "f_036",
+    "raw_email_text": "Handled. Check should arrive by the 30th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-30",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Terse Promise"
+  },
+  {
+    "id": "f_037",
+    "raw_email_text": "Forwarding to our finance team (finance@client.com) to handle.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Forwarding"
+  },
+  {
+    "id": "f_038",
+    "raw_email_text": "We are having some cashflow issues. We might be able to pay half next month.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Hardship"
+  },
+  {
+    "id": "f_039",
+    "raw_email_text": "Payment was sent last week. Why are you still emailing me? This is harassment.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Hostile/Paid"
+  },
+  {
+    "id": "f_040",
+    "raw_email_text": "I will pay on 4/28. \n\n--- Original Message ---\nFrom: payd@acme.com\nSent: 4/15/2026\nSubject: Invoice INV-001 is due 4/20/2026",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-28",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Quoted Thread"
+  },
+  {
+    "id": "f_041",
+    "raw_email_text": "I'll try to pay you by Friday if the check clears.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Conditional Promise"
+  },
+  {
+    "id": "f_042",
+    "raw_email_text": "The transfer was initiated via our portal. Should be there in 2 days.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Paid/Initiated"
+  },
+  {
+    "id": "f_043",
+    "raw_email_text": "Forwarding to my partner, Mike. He handles the payments.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Forwarding"
+  },
+  {
+    "id": "f_044",
+    "raw_email_text": "Wait, we were charged twice for the support package. Can you fix this?",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Duplicate Billing Dispute"
+  },
+  {
+    "id": "f_045",
+    "raw_email_text": "Yes, I will pay $1000 on the 25th and $500 on May 5th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-25",
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Split Promise"
+  },
+  {
+    "id": "f_046",
+    "raw_email_text": "I will get it done. Processing now.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Vague Process"
+  },
+  {
+    "id": "f_047",
+    "raw_email_text": "Everything is on track for payment next Wednesday the 29th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-29",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Standard Promise"
+  },
+  {
+    "id": "f_048",
+    "raw_email_text": "We need an extension of 10 days before we can pay.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Extension Request/Hardship"
+  },
+  {
+    "id": "f_049",
+    "raw_email_text": "The payment was issued. Check #1234.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_050",
+    "raw_email_text": "Checking.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Terse"
+  },
+  {
+    "id": "f_051",
+    "raw_email_text": "I hope to pay this by the end of the month if our funding comes through.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Conditional/Hope"
+  },
+  {
+    "id": "f_052",
+    "raw_email_text": "The check is in the mail. You should receive it by Thursday.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Check in Mail"
+  },
+  {
+    "id": "f_053",
+    "raw_email_text": "We are processing this now. Awaiting the final approval from my manager.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Internal Process"
+  },
+  {
+    "id": "f_054",
+    "raw_email_text": "I expect to pay next week.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Expectation"
+  },
+  {
+    "id": "f_055",
+    "raw_email_text": "I'll try to get this squared away by Monday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Try/Vague"
+  },
+  {
+    "id": "f_056",
+    "raw_email_text": "AP is currently handling this. It should be processed in the next batch.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "AP Handling"
+  },
+  {
+    "id": "f_057",
+    "raw_email_text": "I will pay $1200 on Friday, May 1st. Please confirm receipt.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-05-01",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Concrete Promise"
+  },
+  {
+    "id": "f_058",
+    "raw_email_text": "I'll pay as soon as possible. Processing now.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "ASAP/Processing"
+  },
+  {
+    "id": "f_059",
+    "raw_email_text": "Payment initiated. Should hit your account by Wednesday.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Initiated"
+  },
+  {
+    "id": "f_060",
+    "raw_email_text": "We are still waiting on approval for this expense.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Waiting Approval"
+  },
+  {
+    "id": "f_061",
+    "raw_email_text": "I am out of office. Please contact payments@acme.com.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_062",
+    "raw_email_text": "I'll pay on 4/30. \n\nOriginal Message:\nAmount: $500\nDate: 4/10/2026",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-30",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Short Reply"
+  },
+  {
+    "id": "f_063",
+    "raw_email_text": "We already sent the wire today. Let us know if you don't see it.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Wire Sent"
+  },
+  {
+    "id": "f_064",
+    "raw_email_text": "I can't pay this until the disputed items are removed from the invoice.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Direct Dispute"
+  },
+  {
+    "id": "f_065",
+    "raw_email_text": "I'll handle this by EOD Tuesday.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-21",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Timing commitment"
+  },
+  {
+    "id": "f_066",
+    "raw_email_text": "I will get it to you as soon as I can, likely by Friday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "ASAP/Vague"
+  },
+  {
+    "id": "f_067",
+    "raw_email_text": "We are processing the check now. AP handles all the payments.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Process/AP"
+  },
+  {
+    "id": "f_068",
+    "raw_email_text": "The payment was initiated. I expect it to clear by Friday.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Initiated/Expect"
+  },
+  {
+    "id": "f_069",
+    "raw_email_text": "I will pay on 4/30.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-30",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Short Date Promise"
+  },
+  {
+    "id": "f_070",
+    "raw_email_text": "I'll try to get this to you Monday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Try Signal"
+  },
+  {
+    "id": "f_071",
+    "raw_email_text": "I will pay on Monday the 20th. \n\nFrom: billing@acme.com\nSent: 4/13/2026",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-20",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Quoted Thread"
+  },
+  {
+    "id": "f_072",
+    "raw_email_text": "We are still waiting for the final CFO signature.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Process/CFO"
+  },
+  {
+    "id": "f_073",
+    "raw_email_text": "The check was cut on Friday and mailed out today.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Check Mailed"
+  },
+  {
+    "id": "f_074",
+    "raw_email_text": "I'll handle this soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Vague Soon"
+  },
+  {
+    "id": "f_075",
+    "raw_email_text": "Yes, I will pay $400 by EOD Wednesday.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-22",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Standard Promise"
+  },
+  {
+    "id": "f_076",
+    "raw_email_text": "I hope to get this to you by the end of the week.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Hope Signal"
+  },
+  {
+    "id": "f_077",
+    "raw_email_text": "The wire was initiated this morning. Reference #5555.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Wire Sent"
+  },
+  {
+    "id": "f_078",
+    "raw_email_text": "I expect this will be settled by Friday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Expectation"
+  },
+  {
+    "id": "f_079",
+    "raw_email_text": "Checking.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Terse"
+  },
+  {
+    "id": "f_080",
+    "raw_email_text": "I will pay on 5/1.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-05-01",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Short Date Promise"
+  },
+  {
+    "id": "f_081",
+    "raw_email_text": "Remittance advice is attached for invoice INV-102.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Remittance"
+  },
+  {
+    "id": "f_082",
+    "raw_email_text": "The wire was sent this morning from our Wells Fargo account.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Wire Sent"
+  },
+  {
+    "id": "f_083",
+    "raw_email_text": "Payment has been processed and is in the mail.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Mailed"
+  },
+  {
+    "id": "f_084",
+    "raw_email_text": "I will pay you tomorrow via Zelle.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-19",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Direct Promise"
+  },
+  {
+    "id": "f_085",
+    "raw_email_text": "We already processed this on the 15th. Reference #8892.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Already Processed"
+  },
+  {
+    "id": "f_086",
+    "raw_email_text": "Done. Check your bank.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Terse Paid"
+  },
+  {
+    "id": "f_087",
+    "raw_email_text": "Sent.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "One-word Paid"
+  },
+  {
+    "id": "f_088",
+    "raw_email_text": "Bank transfer done. Should arrive shortly.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Transfer Done"
+  },
+  {
+    "id": "f_089",
+    "raw_email_text": "I paid this via card on your website just now.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Web Payment"
+  },
+  {
+    "id": "f_090",
+    "raw_email_text": "Payment initiated this morning. \n\nFrom: billing@acme.com\nSent: 4/15/2026",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Quoted Thread Paid"
+  },
+  {
+    "id": "f_091",
+    "raw_email_text": "I'll get it paid by Friday, April 24th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Concrete Date"
+  },
+  {
+    "id": "f_092",
+    "raw_email_text": "I am looking into why this hasn't been paid yet.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Investigation"
+  },
+  {
+    "id": "f_093",
+    "raw_email_text": "We sent the payment already, but I think the address was wrong.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Paid/Problem"
+  },
+  {
+    "id": "f_094",
+    "raw_email_text": "Everything is on hold until we get the refund for the damaged goods.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Hold Dispute"
+  },
+  {
+    "id": "f_095",
+    "raw_email_text": "I will send it by EOD today.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-18",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "EOD Today"
+  },
+  {
+    "id": "f_096",
+    "raw_email_text": "Processed.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "One-word Processed"
+  },
+  {
+    "id": "f_097",
+    "raw_email_text": "Done.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "One-word Done"
+  },
+  {
+    "id": "f_098",
+    "raw_email_text": "Forwarded to the finance team. They will handle it.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Forwarded"
+  },
+  {
+    "id": "f_099",
+    "raw_email_text": "Handled. You should see it in your account soon.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Terse Handled"
+  },
+  {
+    "id": "f_100",
+    "raw_email_text": "Sent the check today. Reference #8812.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Sent Check"
+  },
+  {
+    "id": "f_101",
+    "raw_email_text": "I'll try to get this paid tomorrow. \n\nFrom: billing@acme.com\nSent: 4/15/2026",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Quoted/Try"
+  },
+  {
+    "id": "f_102",
+    "raw_email_text": "We are still waiting on CFO approval for this month's invoices.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Waiting CFO"
+  },
+  {
+    "id": "f_103",
+    "raw_email_text": "Paid half via portal. Will pay the rest on 5/5.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Mixed Signal"
+  },
+  {
+    "id": "f_104",
+    "raw_email_text": "Looking into it.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "medium",
+    "category": "Low Signal"
+  },
+  {
+    "id": "f_105",
+    "raw_email_text": "We already sent this on Friday. Please stop bugging us.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Hostile/Paid"
+  },
+  {
+    "id": "f_106",
+    "raw_email_text": "Sent.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "One-word Sent"
+  },
+  {
+    "id": "f_107",
+    "raw_email_text": "Checking with accounts payable. Should be soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "AP Check"
+  },
+  {
+    "id": "f_108",
+    "raw_email_text": "Will pay on 4/30.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-30",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Terse Promise"
+  },
+  {
+    "id": "f_109",
+    "raw_email_text": "I hope to get this out by Friday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Hope Signal"
+  },
+  {
+    "id": "f_110",
+    "raw_email_text": "Wire was sent this morning.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Wire Sent"
+  },
+  {
+    "id": "f_111",
+    "raw_email_text": "I will make sure this is paid by Friday evening.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_112",
+    "raw_email_text": "Our system shows this was paid on 4/12. Please check your bank.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_113",
+    "raw_email_text": "I'll try to get to this by next week, but we're short-staffed.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_114",
+    "raw_email_text": "We are disputing the hourly rate on this invoice. It's higher than agreed.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_115",
+    "raw_email_text": "I am on maternity leave until June. Contact HR for urgent matters.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_116",
+    "raw_email_text": "Received, thanks.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_117",
+    "raw_email_text": "I will send the payment on May 10th for sure.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-05-10",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_118",
+    "raw_email_text": "The check is in the mail, sent it yesterday morning.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_119",
+    "raw_email_text": "Should have this processed by early next week if all goes well.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_120",
+    "raw_email_text": "This invoice is incorrect. The quantity listed is double what we received.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_121",
+    "raw_email_text": "Out of office until Tuesday.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_122",
+    "raw_email_text": "Could you send me the PDF again? I can't find it.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_123",
+    "raw_email_text": "Will pay on the 30th of April.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-30",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_124",
+    "raw_email_text": "Payment was just initiated through our corporate portal.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_125",
+    "raw_email_text": "I hope to get this cleared by Friday, just waiting on one signature.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_126",
+    "raw_email_text": "I'm not paying this late fee. It was your system that was down.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_127",
+    "raw_email_text": "Traveling with limited email access until the 25th.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_128",
+    "raw_email_text": "Noted, will forward to accounting.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_129",
+    "raw_email_text": "Confirming I will pay the full amount this Friday, April 24.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_130",
+    "raw_email_text": "Just sent the wire. You should have it within 24 hours.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_131",
+    "raw_email_text": "Processing now, should be done soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_132",
+    "raw_email_text": "We are refusing to pay until the service issues are addressed.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_133",
+    "raw_email_text": "In meetings all day, will respond tomorrow.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_134",
+    "raw_email_text": "Out of the country until next month.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_135",
+    "raw_email_text": "I'll pay the balance on Monday, April 27th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-27",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_136",
+    "raw_email_text": "Already took care of this. Check #4451.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_137",
+    "raw_email_text": "I expect to pay this by next Wednesday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_138",
+    "raw_email_text": "The amount shown is $100 more than what was quoted.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_139",
+    "raw_email_text": "OOO until Monday.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_140",
+    "raw_email_text": "Okay, thanks for the reminder.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_141",
+    "raw_email_text": "I will send $200 today and the rest by next Friday.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-18",
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_142",
+    "raw_email_text": "Paid yesterday via ACH. Confirmation #7781.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_143",
+    "raw_email_text": "Sent to AP, should be processed shortly.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_144",
+    "raw_email_text": "We already returned those items, why are we still being billed for them?",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_145",
+    "raw_email_text": "Vacation mode active until 5/1.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_146",
+    "raw_email_text": "Checking with my team.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_147",
+    "raw_email_text": "I'll make the payment on May 1st.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-05-01",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_148",
+    "raw_email_text": "Already sent to bank, processing now.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_149",
+    "raw_email_text": "Will try to get this done by Monday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_150",
+    "raw_email_text": "Can we get a discount for paying early next time?",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "medium",
+    "category": "Other"
+  },
+  {
+    "id": "f_151",
+    "raw_email_text": "The price is wrong based on our contract.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_152",
+    "raw_email_text": "Away at a conference until Friday.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_153",
+    "raw_email_text": "Will pay this on Friday, April 24th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_154",
+    "raw_email_text": "Payment has been initiated, should reach you soon.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_155",
+    "raw_email_text": "Waiting on CFO signature.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_156",
+    "raw_email_text": "Never received the goods. Won't pay.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_157",
+    "raw_email_text": "Off grid until Monday.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_158",
+    "raw_email_text": "Checking on the status now.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_159",
+    "raw_email_text": "I will pay on 4/25.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-25",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_160",
+    "raw_email_text": "Check was sent on Wednesday.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_161",
+    "raw_email_text": "I expect this to be done by the 30th.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_162",
+    "raw_email_text": "This was already disputed last week.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_163",
+    "raw_email_text": "I'm traveling and will be back on Tuesday.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_164",
+    "raw_email_text": "Forwarded to accounting.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_165",
+    "raw_email_text": "Will pay this Friday, April 24th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_166",
+    "raw_email_text": "Payment initiated this morning.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_167",
+    "raw_email_text": "Should have the payment sent soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_168",
+    "raw_email_text": "I won't pay until we get the credit memo.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_169",
+    "raw_email_text": "On vacation until next week.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_170",
+    "raw_email_text": "Got it, will look into it.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_171",
+    "raw_email_text": "I will pay on May 5th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-05-05",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_172",
+    "raw_email_text": "Just paid through the website.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_173",
+    "raw_email_text": "Waiting on one more sign off, hope to pay soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_174",
+    "raw_email_text": "The late fee is ridiculous, I'm not paying it.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_175",
+    "raw_email_text": "Away until Monday, no email access.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_176",
+    "raw_email_text": "Noted.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_177",
+    "raw_email_text": "I will send the payment on the 30th.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-30",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_178",
+    "raw_email_text": "Check sent this morning, thanks.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_179",
+    "raw_email_text": "I'll try to pay you by Monday.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "high",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_180",
+    "raw_email_text": "I already disputed this invoice in our previous email thread.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_181",
+    "raw_email_text": "I am on sabbatical until August.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_182",
+    "raw_email_text": "Okay, checking with our team.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_183",
+    "raw_email_text": "Will pay on 4/24 for sure.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_184",
+    "raw_email_text": "Wire initiated. Should be with you soon.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_185",
+    "raw_email_text": "We hope to pay this by early next week.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_186",
+    "raw_email_text": "The quantity on the invoice is wrong, please correct.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_187",
+    "raw_email_text": "OutOfOffice until next week.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_188",
+    "raw_email_text": "Sent to our finance team.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_189",
+    "raw_email_text": "I will pay on May 1st.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-05-01",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_190",
+    "raw_email_text": "Payment has been processed on our end.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_191",
+    "raw_email_text": "Processing, should be paid soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_192",
+    "raw_email_text": "We are disputing this amount due to poor quality of service.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_193",
+    "raw_email_text": "Away until Wednesday.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_194",
+    "raw_email_text": "Forwarded to the relevant department.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  },
+  {
+    "id": "f_195",
+    "raw_email_text": "I will make the payment by Friday evening.",
+    "expected_classification": "explicit_promise",
+    "expected_promised_date": "2026-04-24",
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Explicit Promise"
+  },
+  {
+    "id": "f_196",
+    "raw_email_text": "Paid yesterday. Confirmation attached.",
+    "expected_classification": "paid_claim",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Paid Claim"
+  },
+  {
+    "id": "f_197",
+    "raw_email_text": "Should have the signature and payment done soon.",
+    "expected_classification": "weak_payment_signal",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "medium",
+    "category": "Weak Signal"
+  },
+  {
+    "id": "f_198",
+    "raw_email_text": "We're not paying this until the missing units arrive.",
+    "expected_classification": "dispute",
+    "expected_promised_date": null,
+    "expected_requires_human_review": true,
+    "ambiguity": "low",
+    "category": "Dispute"
+  },
+  {
+    "id": "f_199",
+    "raw_email_text": "Traveling until next Monday.",
+    "expected_classification": "out_of_office",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "OOO"
+  },
+  {
+    "id": "f_200",
+    "raw_email_text": "Checking on this now.",
+    "expected_classification": "other",
+    "expected_promised_date": null,
+    "expected_requires_human_review": false,
+    "ambiguity": "low",
+    "category": "Other"
+  }
+]

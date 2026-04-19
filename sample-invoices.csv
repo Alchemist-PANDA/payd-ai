@@ -1,0 +1,6 @@
+invoice_number,contact_name,contact_email,amount,currency,due_date,issued_date
+INV-2001,Acme Industries,billing@acme-industries.com,5000.00,USD,2026-05-15,2026-04-01
+INV-2002,Beta Corp,ap@betacorp.com,12500.50,USD,2026-05-20,2026-04-05
+INV-2003,Gamma LLC,finance@gamma-llc.com,3200.00,USD,2026-05-10,2026-03-28
+INV-2004,Delta Systems,accounts@deltasys.com,8750.25,USD,2026-06-01,2026-04-10
+INV-2005,Epsilon Co,billing@epsilon.co,15000.00,USD,2026-05-25,2026-04-08
