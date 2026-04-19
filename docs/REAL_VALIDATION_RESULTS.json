@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-19T11:09:02.124Z",
+  "timestamp": "2026-04-19T11:16:39.538Z",
   "test_account_id": "44740cd7-d8ff-4097-bc6b-df7047702ab1",
   "scenarios": [
     {
@@ -33,13 +33,33 @@
     },
     {
       "name": "Contact Matching",
-      "expected": {},
+      "expected": {
+        "user_intended_email": "sarah@newcompany.com"
+      },
       "actual": {
-        "contact_lookup_result": null
+        "contact1_created": {
+          "id": "c2d59636-4743-4779-ac62-e909c4cc1a83",
+          "name": "Sarah Johnson",
+          "email": "sarah@oldcompany.com"
+        },
+        "lookup_by_name_result": {
+          "id": "c2d59636-4743-4779-ac62-e909c4cc1a83",
+          "name": "Sarah Johnson",
+          "email": "sarah@oldcompany.com"
+        },
+        "system_found_email": "sarah@oldcompany.com",
+        "final_linked_email": "sarah@oldcompany.com",
+        "matching_strategy": "name_only",
+        "email_ignored": true,
+        "risk_level": "HIGH - emails sent to wrong recipient",
+        "duplicate_contact_blocked": false,
+        "total_contacts_with_same_name": 2,
+        "ambiguous_lookup_count": 2
       },
       "mismatches": [],
       "bugs": [
-        "Fatal error: Cannot read properties of null (reading 'id')"
+        "CONFIRMED BUG: Contact matching by name only causes email mismatch. User CSV had \"Sarah Johnson <sarah@newcompany.com>\" but system reused existing \"Sarah Johnson <sarah@oldcompany.com>\". Invoice will be sent to WRONG email address.",
+        "CONFIRMED BUG: Multiple contacts with same name exist (2 \"Sarah Johnson\" contacts). CSV import using .single() will fail with \"multiple rows returned\" error. System cannot reliably match contacts by name only when duplicates exist."
       ]
     },
     {
@@ -59,7 +79,7 @@
   ],
   "summary": {
     "total_scenarios": 4,
-    "total_bugs": 1,
+    "total_bugs": 2,
     "total_mismatches": 0
   }
 }

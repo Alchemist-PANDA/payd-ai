@@ -449,33 +449,51 @@ async function scenario3_ContactMatchingTest() {
   };
 
   try {
-    // Create first contact
+    // Use unique name to avoid collision with Scenario 1
+    const testName = 'Sarah Johnson';
+    const oldEmail = 'sarah@oldcompany.com';
+    const newEmail = 'sarah@newcompany.com';
+
+    // Step 1: Create first contact with email A
     const { data: contact1, error: c1Error } = await supabase
       .from('contacts')
       .insert({
         account_id: testAccountId,
-        name: 'John Smith',
-        email: 'john@oldcompany.com'
+        name: testName,
+        email: oldEmail
       })
       .select('id, name, email')
       .single();
 
     if (c1Error) throw c1Error;
     log('✓ Created contact 1', contact1);
+    scenario.actual.contact1_created = contact1;
 
-    // Try to create invoice with same name but different email
-    // (simulating CSV import behavior)
-    const { data: existingContact } = await supabase
+    // Step 2: Simulate CSV import behavior - lookup by name only (matching product code)
+    log('\nSimulating CSV import: looking up contact by name only...');
+    const { data: lookupResult, error: lookupError } = await supabase
       .from('contacts')
       .select('id, name, email')
       .eq('account_id', testAccountId)
-      .eq('name', 'John Smith')
+      .eq('name', testName)
       .single();
 
-    scenario.actual.contact_lookup_result = existingContact;
-    log('Contact lookup by name returned:', existingContact);
+    if (lookupError) {
+      log('❌ Contact lookup failed:', lookupError.message);
+      throw lookupError;
+    }
 
-    // Create invoice using the found contact
+    scenario.actual.lookup_by_name_result = lookupResult;
+    log('Contact lookup by name returned:', lookupResult);
+
+    // Step 3: User intends to import invoice with DIFFERENT email
+    scenario.expected.user_intended_email = newEmail;
+    scenario.actual.system_found_email = lookupResult.email;
+
+    log(`\nUser CSV has: ${testName} <${newEmail}>`);
+    log(`System found: ${testName} <${lookupResult.email}>`);
+
+    // Step 4: Create invoice using the found contact (simulating CSV import behavior)
     const { data: invoice, error: invError } = await supabase
       .from('invoices')
       .insert({
@@ -487,25 +505,26 @@ async function scenario3_ContactMatchingTest() {
         issued_date: '2026-04-10',
         status: 'pending'
       })
-      .select('id')
+      .select('id, invoice_number')
       .single();
 
     if (invError) throw invError;
 
+    // Step 5: Link invoice to the found contact (reusing old email contact)
     const { error: linkError } = await supabase
       .from('invoice_contact_links')
       .insert({
         account_id: testAccountId,
         invoice_id: invoice.id,
-        contact_id: existingContact.id,
+        contact_id: lookupResult.id,
         contact_type: 'primary'
       });
 
     if (linkError) throw linkError;
 
-    log('✓ Created invoice linked to existing contact');
+    log('✓ Created invoice linked to found contact');
 
-    // Verify: invoice should be linked to john@oldcompany.com, NOT john@newcompany.com
+    // Step 6: Verify which email is actually linked
     const { data: linkedContact, error: fetchError } = await supabase
       .from('invoice_contact_links')
       .select(`
@@ -517,17 +536,80 @@ async function scenario3_ContactMatchingTest() {
 
     if (fetchError) throw fetchError;
 
-    scenario.actual.linked_email = linkedContact.contact.email;
-    scenario.expected.user_intended_email = 'john@newcompany.com';
-    scenario.actual.system_used_email = linkedContact.contact.email;
-
+    scenario.actual.final_linked_email = linkedContact.contact.email;
     log('✓ Verified linked contact', linkedContact.contact);
 
-    if (scenario.actual.system_used_email !== scenario.expected.user_intended_email) {
-      scenario.bugs.push(`CONFIRMED BUG: Contact matching by name only causes email mismatch. User intended john@newcompany.com but system used ${scenario.actual.system_used_email}`);
+    // Step 7: Analyze results
+    log('\n--- ANALYSIS ---');
+    log(`User intended email: ${scenario.expected.user_intended_email}`);
+    log(`System used email: ${scenario.actual.final_linked_email}`);
+
+    if (scenario.actual.final_linked_email !== scenario.expected.user_intended_email) {
+      const bugDescription = `CONFIRMED BUG: Contact matching by name only causes email mismatch. ` +
+        `User CSV had "${testName} <${newEmail}>" but system reused existing ` +
+        `"${testName} <${oldEmail}>". Invoice will be sent to WRONG email address.`;
+
+      scenario.bugs.push(bugDescription);
+      log(`❌ ${bugDescription}`);
+
+      // Additional analysis
+      scenario.actual.matching_strategy = 'name_only';
+      scenario.actual.email_ignored = true;
+      scenario.actual.risk_level = 'HIGH - emails sent to wrong recipient';
+    } else {
+      log('✓ Email matched correctly');
+      scenario.actual.matching_strategy = 'name_and_email';
+      scenario.actual.email_ignored = false;
     }
 
-    log('✓ Scenario 3 complete', scenario);
+    // Step 8: Test duplicate scenario - what if we try to create another contact with same name?
+    log('\n--- DUPLICATE TEST ---');
+    const { data: contact2, error: c2Error } = await supabase
+      .from('contacts')
+      .insert({
+        account_id: testAccountId,
+        name: testName,
+        email: 'sarah@thirdcompany.com'
+      })
+      .select('id, name, email')
+      .single();
+
+    if (c2Error) {
+      log('Contact creation blocked:', c2Error.message);
+      scenario.actual.duplicate_contact_blocked = true;
+    } else {
+      log('✓ Created second contact with same name, different email:', contact2);
+      scenario.actual.duplicate_contact_blocked = false;
+      scenario.actual.total_contacts_with_same_name = 2;
+
+      // Now lookup by name will be ambiguous
+      const { data: ambiguousLookup, error: ambigError } = await supabase
+        .from('contacts')
+        .select('id, name, email')
+        .eq('account_id', testAccountId)
+        .eq('name', testName);
+
+      if (!ambigError && ambiguousLookup) {
+        scenario.actual.ambiguous_lookup_count = ambiguousLookup.length;
+        log(`⚠️  Name lookup now returns ${ambiguousLookup.length} contacts:`, ambiguousLookup);
+
+        if (ambiguousLookup.length > 1) {
+          const ambiguityBug = `CONFIRMED BUG: Multiple contacts with same name exist (${ambiguousLookup.length} "${testName}" contacts). ` +
+            `CSV import using .single() will fail with "multiple rows returned" error. ` +
+            `System cannot reliably match contacts by name only when duplicates exist.`;
+
+          scenario.bugs.push(ambiguityBug);
+          log(`❌ ${ambiguityBug}`);
+        }
+      }
+    }
+
+    log('\n--- CONCLUSION ---');
+    log('Contact matching strategy: NAME ONLY (ignores email)');
+    log('Risk: HIGH - Wrong email addresses, ambiguous matches with duplicates');
+    log('Recommendation: Match by name AND email, or use unique contact identifier');
+
+    log('\n✓ Scenario 3 complete', scenario);
     return scenario;
 
   } catch (error) {
