@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-04-19T11:09:02.124Z",
+  "test_account_id": "44740cd7-d8ff-4097-bc6b-df7047702ab1",
+  "scenarios": [
+    {
+      "name": "Basic CSV Import",
+      "expected": {
+        "invoices_to_import": 2
+      },
+      "actual": {
+        "invoices_created": 2,
+        "contact_links_created": 2,
+        "primary_links": 2
+      },
+      "mismatches": [],
+      "bugs": []
+    },
+    {
+      "name": "Scheduler Execution",
+      "expected": {
+        "invoices_to_process": 2
+      },
+      "actual": {
+        "triggered": 2,
+        "skipped": 0,
+        "scheduler_state_rows": 2,
+        "triggered_states": 2,
+        "queue_items": 2,
+        "pending_review": 2
+      },
+      "mismatches": [],
+      "bugs": []
+    },
+    {
+      "name": "Contact Matching",
+      "expected": {},
+      "actual": {
+        "contact_lookup_result": null
+      },
+      "mismatches": [],
+      "bugs": [
+        "Fatal error: Cannot read properties of null (reading 'id')"
+      ]
+    },
+    {
+      "name": "Scheduler Idempotency",
+      "expected": {
+        "total_state_rows": 1
+      },
+      "actual": {
+        "first_run_result": "success",
+        "second_run_result": "conflict",
+        "conflict_code": "23505",
+        "total_state_rows": 1
+      },
+      "mismatches": [],
+      "bugs": []
+    }
+  ],
+  "summary": {
+    "total_scenarios": 4,
+    "total_bugs": 1,
+    "total_mismatches": 0
+  }
+}
