@@ -1,17 +1,37 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { AppShell } from '../../../components/layout/AppShell';
 import { CsvIngestionService, type ImportPreviewRow } from '../../../src/services/ingestion/CsvIngestionService';
 import { InvoicesService } from '../../../src/services/invoices/InvoicesService';
 import { getCurrentAccount } from '../../../src/lib/supabase/client';
 import { trackEvent } from '../../../src/lib/telemetry';
 import { Button } from '../../../components/ui/Button';
-import { InvoiceTable, Invoice } from '../../../components/invoice/InvoiceTable';
-import { UploadZone } from '../../../components/upload/UploadZone';
-import { Modal } from '../../../components/ui/Modal';
-import { useToast } from '../../../components/ui/Toast';
 import { Badge, BadgeStatus } from '../../../components/ui/Badge';
+import { useToast } from '../../../components/ui/Toast';
+import { SkeletonTableRow } from '../../../components/ui/Skeleton';
+
+// Lazy load heavy components
+const InvoiceTable = dynamic(() => import('../../../components/invoice/InvoiceTable').then(mod => ({ default: mod.InvoiceTable })), {
+  loading: () => (
+    <table className="w-full">
+      <tbody>
+        {[...Array(8)].map((_, i) => <SkeletonTableRow key={i} />)}
+      </tbody>
+    </table>
+  ),
+  ssr: false
+});
+
+const Modal = dynamic(() => import('../../../components/ui/Modal').then(mod => ({ default: mod.Modal })), {
+  ssr: false
+});
+
+const UploadZone = dynamic(() => import('../../../components/upload/UploadZone').then(mod => ({ default: mod.UploadZone })), {
+  loading: () => <div className="skeleton h-64 rounded-lg" />,
+  ssr: false
+});
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);

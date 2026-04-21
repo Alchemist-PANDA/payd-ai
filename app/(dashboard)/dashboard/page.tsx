@@ -1,9 +1,28 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { AppShell } from '../../../components/layout/AppShell';
 import { StatCard } from '../../../components/ui/StatCard';
 import { Button } from '../../../components/ui/Button';
+import { SkeletonStatCard, SkeletonTableRow } from '../../../components/ui/Skeleton';
+
+// Lazy load heavy components
+const InvoiceTable = dynamic(() => import('../../../components/invoice/InvoiceTable').then(mod => ({ default: mod.InvoiceTable })), {
+  loading: () => (
+    <table className="w-full">
+      <tbody>
+        {[...Array(5)].map((_, i) => <SkeletonTableRow key={i} />)}
+      </tbody>
+    </table>
+  ),
+  ssr: false
+});
+
+const ActivityFeed = dynamic(() => import('../../../components/dashboard/ActivityFeed').then(mod => ({ default: mod.ActivityFeed })), {
+  loading: () => <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="skeleton h-16 rounded-lg" />)}</div>,
+  ssr: false
+});
 
 export default function DashboardPage() {
   return (

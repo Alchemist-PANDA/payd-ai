@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-19T11:16:39.538Z",
+  "timestamp": "2026-04-20T21:40:04.503Z",
   "test_account_id": "44740cd7-d8ff-4097-bc6b-df7047702ab1",
   "scenarios": [
     {
@@ -38,29 +38,25 @@
       },
       "actual": {
         "contact1_created": {
-          "id": "c2d59636-4743-4779-ac62-e909c4cc1a83",
+          "id": "36271918-5179-4694-b811-a427dd09358e",
           "name": "Sarah Johnson",
           "email": "sarah@oldcompany.com"
         },
         "lookup_by_name_result": {
-          "id": "c2d59636-4743-4779-ac62-e909c4cc1a83",
+          "id": "c7fd12ad-991a-4858-ac55-07f667fc4204",
           "name": "Sarah Johnson",
-          "email": "sarah@oldcompany.com"
+          "email": "sarah@newcompany.com"
         },
-        "system_found_email": "sarah@oldcompany.com",
-        "final_linked_email": "sarah@oldcompany.com",
-        "matching_strategy": "name_only",
-        "email_ignored": true,
-        "risk_level": "HIGH - emails sent to wrong recipient",
+        "system_found_email": "sarah@newcompany.com",
+        "final_linked_email": "sarah@newcompany.com",
+        "matching_strategy": "name_and_email",
+        "email_ignored": false,
         "duplicate_contact_blocked": false,
         "total_contacts_with_same_name": 2,
-        "ambiguous_lookup_count": 2
+        "ambiguous_lookup_count": 3
       },
       "mismatches": [],
-      "bugs": [
-        "CONFIRMED BUG: Contact matching by name only causes email mismatch. User CSV had \"Sarah Johnson <sarah@newcompany.com>\" but system reused existing \"Sarah Johnson <sarah@oldcompany.com>\". Invoice will be sent to WRONG email address.",
-        "CONFIRMED BUG: Multiple contacts with same name exist (2 \"Sarah Johnson\" contacts). CSV import using .single() will fail with \"multiple rows returned\" error. System cannot reliably match contacts by name only when duplicates exist."
-      ]
+      "bugs": []
     },
     {
       "name": "Scheduler Idempotency",
@@ -79,7 +75,7 @@
   ],
   "summary": {
     "total_scenarios": 4,
-    "total_bugs": 2,
+    "total_bugs": 0,
     "total_mismatches": 0
   }
 }

@@ -69,12 +69,15 @@ export class QueueIngestionService {
   /**
    * Generate a draft email and create a queue item for review/editing.
    * IMPLEMENTS GRACEFUL DEGRADATION: Never fails due to missing AI keys.
+   *
+   * Phase 3 Enhancement: Multi-contact support with auto-CC for escalation contacts at Stage 4+
    */
   static async generateDraftAndQueue(
     accountId: UUID,
     invoice: Invoice,
     contact: Contact,
-    context: string
+    context: string,
+    stage?: number
   ) {
     let draft;
     let fallbackUsed = false;
@@ -96,6 +99,23 @@ export class QueueIngestionService {
       };
     }
 
+    // Phase 3: Multi-contact auto-CC logic
+    // Stage 4+ (14 days overdue) should CC escalation contacts
+    let ccContacts: Contact[] = [];
+    if (stage !== undefined && stage >= 14) {
+      const { data: escalationLinks } = await supabase
+        .from('invoice_contact_links')
+        .select('contact:contacts(id, account_id, name, email, phone)')
+        .eq('invoice_id', invoice.id)
+        .eq('contact_type', 'escalation');
+
+      if (escalationLinks && escalationLinks.length > 0) {
+        ccContacts = escalationLinks
+          .map((link: any) => link.contact)
+          .filter((c: any) => c && c.email);
+      }
+    }
+
     // Insert into action_queue for human review
     const { data, error } = await supabase
       .from('action_queue')
@@ -110,7 +130,9 @@ export class QueueIngestionService {
           draft,
           context,
           is_fallback: fallbackUsed,
-          fallback_label: fallbackUsed ? 'Auto-generated (no AI)' : null
+          fallback_label: fallbackUsed ? 'Auto-generated (no AI)' : null,
+          cc_contacts: ccContacts.map(c => ({ id: c.id, name: c.name, email: c.email })),
+          stage: stage || 0
         },
         ai_confidence: draft.confidence,
         requires_human_review: true
@@ -138,12 +160,34 @@ export class QueueIngestionService {
       );
     }
 
+    // Audit escalation CC usage
+    if (ccContacts.length > 0) {
+      await InvoicesService.createAuditLog(
+        accountId,
+        'queue.escalation_cc_added',
+        'action_queue',
+        data.id,
+        {
+          action_type: 'send_email',
+          invoice_number: invoice.invoice_number,
+          stage,
+          cc_count: ccContacts.length,
+          cc_contacts: ccContacts.map(c => c.email)
+        }
+      );
+    }
+
     await InvoicesService.createAuditLog(
       accountId,
       'queue_item.created',
       'action_queue',
       data.id,
-      { action_type: 'send_email', invoice_number: invoice.invoice_number, source: fallbackUsed ? 'fallback' : 'ai' }
+      {
+        action_type: 'send_email',
+        invoice_number: invoice.invoice_number,
+        source: fallbackUsed ? 'fallback' : 'ai',
+        has_cc: ccContacts.length > 0
+      }
     );
 
     return data;

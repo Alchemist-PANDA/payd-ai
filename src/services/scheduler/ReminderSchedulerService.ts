@@ -325,7 +325,8 @@ export class ReminderSchedulerService {
             issued_date: invoice.issued_date
           } as Invoice,
           primaryContact,
-          context
+          context,
+          stage.stage // Pass stage for multi-contact CC logic
         );
 
         await supabase

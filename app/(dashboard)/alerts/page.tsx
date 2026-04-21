@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AppShell } from '../../../components/layout/AppShell';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
-import { BrokenPromiseDetail } from '../../../../packages/shared/src/types/broken-promise';
+import { BrokenPromiseDetail } from '@/packages/shared/src/types/broken-promise';
 
 export default function BrokenPromiseAlertsPage() {
   const [isLoading, setIsLoading] = useState(true);

@@ -24,11 +24,11 @@
   --info:           #3B82F6;
   --info-bg:        rgba(59, 130, 246, 0.1);
 
-  /* Text */
-  --text-primary:   #F0F2F5;   /* Headlines, primary content */
-  --text-secondary: #8B919E;   /* Labels, metadata */
-  --text-muted:     #4A5060;   /* Placeholders, disabled */
-  --text-accent:    #00E5C3;   /* Links, accent text */
+  /* Text - Updated for WCAG AA Contrast Compliance */
+  --text-primary:   #F9FAFB;   /* Headlines, primary content (Lightened from #F0F2F5) */
+  --text-secondary: #9CA3AF;   /* Labels, metadata (Lightened from #8B919E) */
+  --text-muted:     #6B7280;   /* Placeholders, disabled (Lightened from #4A5060) */
+  --text-accent:    #14F1D9;   /* Links, accent text (Lightened for better contrast) */
 
   /* Borders */
   --border-subtle:  rgba(255,255,255,0.06);

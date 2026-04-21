@@ -6,6 +6,7 @@ import {
   type ActionQueueItem
 } from '../../../packages/shared/src/types/contracts';
 import { InvoicesService } from '../invoices/InvoicesService';
+import { trackEvent } from '../../lib/telemetry';
 
 /**
  * ACTION QUEUE SERVICE (Phase 3 Hardened)
@@ -52,7 +53,7 @@ export class ActionQueueService {
     // 1. Fetch current status
     const { data: item, error: fetchError } = await supabase
       .from('action_queue')
-      .select('status, account_id')
+      .select('status, account_id, action_type, invoice_id, payload')
       .eq('id', itemId)
       .single();
 
@@ -84,6 +85,14 @@ export class ActionQueueService {
       itemId,
       { from: item.status, to: newStatus, ...metadata }
     );
+
+    // 5. Telemetry
+    if (newStatus === 'approved') {
+      const isFallback = (item.payload as any)?.is_fallback === true;
+      trackEvent.actionApproved(item.action_type || 'unknown', item.invoice_id || 'unknown', isFallback);
+    } else if (newStatus === 'skipped') {
+      trackEvent.actionSkipped(item.action_type || 'unknown', item.invoice_id || 'unknown', metadata.reason || 'user_skipped');
+    }
   }
 
   static async updatePayload(

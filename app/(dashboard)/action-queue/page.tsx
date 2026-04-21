@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { ActionQueueService } from '../../../src/services/queue/ActionQueueService';
 import { getCurrentAccount, supabase } from '../../../src/lib/supabase/client';
 import { trackEvent } from '../../../src/lib/telemetry';
@@ -8,8 +9,14 @@ import { type ActionQueueItem, type ActionQueueStatus } from '../../../packages/
 import { AppShell } from '../../../components/layout/AppShell';
 import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
-import { EmailPreview } from '../../../components/invoice/EmailPreview';
 import { useToast } from '../../../components/ui/Toast';
+import { SkeletonCard } from '../../../components/ui/Skeleton';
+
+// Lazy load EmailPreview component
+const EmailPreview = dynamic(() => import('../../../components/invoice/EmailPreview').then(mod => ({ default: mod.EmailPreview })), {
+  loading: () => <SkeletonCard />,
+  ssr: false
+});
 
 type FilterStatus = ActionQueueStatus | 'all';
 

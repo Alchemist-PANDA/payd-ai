@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AppShell } from '../../../components/layout/AppShell';
 import { StatCard } from '../../../components/ui/StatCard';
 import { Badge } from '../../../components/ui/Badge';
-import { getGradeColor, scoreToGrade, CRSDetail } from '../../../../packages/shared/src/types/crs';
+import { getGradeColor, scoreToGrade, CRSDetail } from '@/packages/shared/src/types/crs';
 import { supabase } from '../../../src/lib/supabase/client';
 import { getCurrentAccount } from '../../../src/lib/supabase/client';
 

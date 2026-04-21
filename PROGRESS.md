@@ -51,3 +51,20 @@
 - UX CLARITY: PASS (Terminology and guidance pass complete)
 - PRE-LAUNCH REHEARSAL: PASS (CLI & Browser Golden Paths verified)
 - BETA READINESS: READY (Controlled beta flow verified and operationally ready)
+- [2026-04-21] Phase 3: Built CRS Dashboard (SA-12) with mock data and basic UI components.
+- [2026-04-21] Phase 3: Built Broken Promise Escalation Alert UI (SA-19) with detection, CRS delta display, and recommended actions.
+- [2026-04-21] Phase 3: Built Promise Timeline UI with per-client visual history of promises kept/broken.
+- [2026-04-21] Phase 3: Wired multi-contact auto-CC in scheduler — Stage 4+ (14 days overdue) now auto-CCs escalation contacts.
+- [2026-04-21] Phase 3: Built Complaint Monitor service (SA-13) with auto-suspend at 0.5% complaint rate.
+- [2026-04-21] Phase 3: Added PostHog analytics (SA-20) — activation, approval, CRS events tracked.
+- [2026-04-21] Phase 3: Wired PostHog events into CsvIngestionService, ActionQueueService, and CRSCalculatorService.
+- [2026-04-21] Phase 4: Configured Stripe billing service for Growth and Agency Pro tiers. No $49 tier.
+- [2026-04-21] Phase 4: Built landing page emphasizing "Your clients owe you money. Payd.ai makes sure they pay it."
+- [2026-04-21] Phase 4: Finalized and published Terms of Service and Privacy Policy URLs.
+- [2026-04-21] CRITICAL FIX: Complaint Monitor now has cron trigger (every 15 min) and send guard in EmailSenderService.
+- [2026-04-21] CRITICAL FIX: Stripe webhooks implemented for checkout.session.completed, invoice.payment_failed, customer.subscription.deleted.
+- [2026-04-21] CRITICAL FIX: PostHog events wired into CsvIngestionService, ActionQueueService, and CRSCalculatorService.
+- [2026-04-21] Phase 4: Gemma 4 31B interim adapter built but explicitly DISABLED for Cohort A. Cohort A mandates deterministic mode.
+- [2026-04-21] Phase 4: Built COHORT_A_OBSERVATION_GUIDE.md to run the first real user test.
+- [2026-04-21] CRITICAL FIX: CRS Dashboard now uses real DB queries from crs_scores, contacts, invoices, and promises tables.
+- [2026-04-21] CRITICAL FIX: Broken Promise Detection implemented with daily cron (9am), real payment check, and action_queue alert creation.

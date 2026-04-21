@@ -1,53 +1,130 @@
-import { supabase } from './supabase/client';
+import posthog from 'posthog-js';
 
-/**
- * LIGHTWEIGHT BETA INSTRUMENTATION
- * Captures session-level UI events for controlled beta sessions.
- */
-
-const SESSION_STORAGE_KEY = 'payd_beta_session_id';
-
-/**
- * Gets or creates a stable session ID for the current browser session.
- * Uses sessionStorage to persist across refreshes but clear on tab close.
- */
-export function getOrCreateSessionId(): string {
-  if (typeof window === 'undefined') return 'server-side';
-
-  let sessionId = sessionStorage.getItem(SESSION_STORAGE_KEY);
-  if (!sessionId) {
-    sessionId = crypto.randomUUID();
-    sessionStorage.setItem(SESSION_STORAGE_KEY, sessionId);
-  }
-  return sessionId;
-}
-
-/**
- * Tracks a UI event to the audit_log table.
- */
-export async function trackEvent(
-  accountId: string,
-  action: string,
-  metadata: Record<string, any> = {}
-) {
-  const sessionId = getOrCreateSessionId();
-
-  const { error } = await supabase
-    .from('audit_log')
-    .insert({
-      account_id: accountId,
-      action,
-      entity_type: 'ui_session',
-      entity_id: '00000000-0000-0000-0000-000000000000', // Nil UUID for session-level events
-      metadata: {
-        ...metadata,
-        session_id: sessionId,
-        user_agent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
-        url: typeof window !== 'undefined' ? window.location.href : 'unknown'
+// Ensure this only runs on the client side
+if (typeof window !== 'undefined') {
+  // Use env vars for PostHog config, fallback to dummy values for local dev if not set
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY || 'phc_dummy_key', {
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+    loaded: (posthog) => {
+      if (process.env.NODE_ENV === 'development') {
+        posthog.debug();
       }
-    });
-
-  if (error) {
-    console.error(`[Telemetry] Failed to track ${action}:`, error);
-  }
+    },
+    capture_pageview: false, // We'll handle this manually if needed, or rely on Next.js routing
+    capture_pageleave: false
+  });
 }
+
+/**
+ * Identify a user in PostHog
+ */
+export const identifyUser = (userId: string, email: string, accountId: string, role: string) => {
+  if (typeof window === 'undefined') return;
+
+  posthog.identify(userId, {
+    email,
+    account_id: accountId,
+    role
+  });
+
+  // Group by account for B2B tracking
+  posthog.group('company', accountId, {
+    name: `Account ${accountId}`, // Can be updated with real company name
+    plan: 'growth' // Or fetch real plan
+  });
+};
+
+/**
+ * Core application events
+ */
+export const trackEvent = {
+  // Activation events
+  userSignedUp: () => {
+    if (typeof window !== 'undefined') posthog.capture('user_signed_up');
+  },
+  csvUploaded: (rowCount: number, successCount: number) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('csv_uploaded', {
+        row_count: rowCount,
+        success_count: successCount
+      });
+    }
+  },
+  firstDraftPreviewed: () => {
+    if (typeof window !== 'undefined') posthog.capture('first_draft_previewed');
+  },
+  accountActivated: (timeToValueMs: number) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('account_activated', {
+        time_to_value_ms: timeToValueMs
+      });
+    }
+  },
+
+  // Queue & Approval events
+  actionApproved: (actionType: string, invoiceId: string, isFallback: boolean) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('action_approved', {
+        action_type: actionType,
+        invoice_id: invoiceId,
+        is_fallback: isFallback
+      });
+    }
+  },
+  actionEdited: (actionType: string, invoiceId: string) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('action_edited', {
+        action_type: actionType,
+        invoice_id: invoiceId
+      });
+    }
+  },
+  actionSkipped: (actionType: string, invoiceId: string, reason: string) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('action_skipped', {
+        action_type: actionType,
+        invoice_id: invoiceId,
+        reason
+      });
+    }
+  },
+
+  // CRS & Core loop events
+  replyClassified: (category: string, confidence: number, requiresHumanReview: boolean) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('reply_classified', {
+        category,
+        confidence,
+        requires_human_review: requiresHumanReview
+      });
+    }
+  },
+  promiseExtracted: (hasDate: boolean, confidence: number) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('promise_extracted', {
+        has_date: hasDate,
+        confidence
+      });
+    }
+  },
+  crsUpdated: (clientId: string, oldScore: number, newScore: number, delta: number) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('crs_updated', {
+        client_id: clientId,
+        old_score: oldScore,
+        new_score: newScore,
+        delta
+      });
+    }
+  },
+  brokenPromiseDetected: (clientId: string, invoiceAmountCents: number) => {
+    if (typeof window !== 'undefined') {
+      posthog.capture('broken_promise_detected', {
+        client_id: clientId,
+        invoice_amount_cents: invoiceAmountCents
+      });
+    }
+  }
+};
+
+export default trackEvent;

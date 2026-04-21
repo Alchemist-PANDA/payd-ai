@@ -4,6 +4,7 @@ import { InvoiceImportSchema, type InvoiceImport, type UUID } from '../../../pac
 import { InvoicesService } from '../invoices/InvoicesService';
 import { QueueIngestionService } from '../queue/QueueIngestionService';
 import { normalizeEmail } from '../contacts/ContactUtils';
+import { trackEvent } from '../../lib/telemetry';
 
 /**
  * CSV INGESTION PIPELINE (Hardened Phase 2)
@@ -297,6 +298,12 @@ export class CsvIngestionService {
           error_stack: queueErr?.stack?.substring(0, 500)
         });
       }
+    }
+
+    // Telemetry
+    trackEvent.csvUploaded(rows.length, validRows.length);
+    if (queueItemsCreated > 0) {
+      trackEvent.accountActivated(0);
     }
 
     return { success: true, count: validRows.length, queue_items_created: queueItemsCreated };
