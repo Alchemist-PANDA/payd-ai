@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCurrentAccount, getCurrentSession, supabase } from '../../src/lib/supabase/client';
+import { Sidebar } from './Sidebar';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -11,31 +11,32 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
-  const [accountLabel, setAccountLabel] = useState('Loading account...');
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
     async function checkSessionAndAccount() {
-      // 1. Immediate Session Check
       const session = await getCurrentSession();
-      console.log(`[AppShell] Session check: ${!!session}`);
       if (!session) {
         if (mounted) {
-          console.warn('[AppShell] No session found - Redirecting to /login');
           router.replace('/login');
         }
         return;
       }
 
-      // 2. Account Resolution (Non-blocking for children)
       try {
         const account = await getCurrentAccount();
         if (!account) {
           if (mounted) router.replace('/login');
           return;
         }
-        if (mounted) setAccountLabel(`${account.name} (${account.role})`);
+        if (mounted) {
+          setUser({
+            name: account.name,
+            email: session.user.email || '',
+          });
+        }
       } catch (err) {
         console.error('[AppShell] Account resolution failed:', err);
         if (mounted) router.replace('/login');
@@ -62,35 +63,12 @@ export function AppShell({ children }: AppShellProps) {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <aside className="w-64 bg-white border-r border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <span className="font-bold text-xl text-blue-600">Payd AI</span>
-        </div>
-        <nav className="p-4 space-y-2">
-          <Link href="/dashboard" className="block p-2 hover:bg-gray-100 rounded">Dashboard</Link>
-          <Link href="/invoices" className="block p-2 hover:bg-gray-100 rounded">Invoices</Link>
-          <Link href="/action-queue" className="block p-2 hover:bg-gray-100 rounded">Action Queue</Link>
-          <hr className="my-2 border-gray-200" />
-          <button
-            onClick={handleLogout}
-            className="w-full text-left p-2 hover:bg-gray-100 rounded text-red-600"
-          >
-            Logout
-          </button>
-        </nav>
-      </aside>
+    <div className="flex h-screen">
+      <Sidebar user={user || undefined} onSignOut={handleLogout} />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
-          <div className="text-sm text-gray-500">{accountLabel}</div>
-          <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">AA</div>
-        </header>
-
-        <main className="flex-1 overflow-y-auto p-8">
-          {children}
-        </main>
-      </div>
+      <main className="flex-1 overflow-y-auto p-8">
+        {children}
+      </main>
     </div>
   );
 }
