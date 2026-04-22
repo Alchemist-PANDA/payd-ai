@@ -5,7 +5,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { getCurrentAccount, getCurrentSession, supabase } from '../../src/lib/supabase/client';
 import { Sidebar } from './Sidebar';
-import { Button } from '../ui/Button';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -86,25 +85,13 @@ export function AppShell({ children }: AppShellProps) {
     return 'Dashboard';
   };
 
-  // Breadcrumbs logic
-  const getBreadcrumbs = () => {
-    const paths = pathname?.split('/').filter(p => p) || [];
-    return paths.map((path, idx) => {
-      const href = '/' + paths.slice(0, idx + 1).join('/');
-      const label = path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ');
-      return { label, href, isLast: idx === paths.length - 1 };
-    });
-  };
-
   return (
-    <div className="flex min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
+    <div className="app-shell">
       {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm lg:hidden transition-all duration-300 animate-fade-in"
-          onClick={closeSidebar}
-        />
-      )}
+      <div
+        className={`overlay ${isSidebarOpen ? 'visible' : ''}`}
+        onClick={closeSidebar}
+      />
 
       <Sidebar
         user={user || undefined}
@@ -113,112 +100,58 @@ export function AppShell({ children }: AppShellProps) {
         onClose={closeSidebar}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:ml-64 lg:has-[aside.w-20]:ml-20 transition-[margin] duration-300">
+      <div className="main-content">
         {/* Top bar */}
-        <header
-          className={`
-            sticky top-0 z-50 h-16 flex items-center justify-between px-6 border-b border-[var(--border-subtle)]
-            transition-all duration-200
-            ${isScrolled ? 'bg-[var(--bg-surface)]/80 backdrop-blur-md shadow-md' : 'bg-transparent'}
-          `}
-        >
-          <div className="flex items-center gap-4">
-            <button
-              className="p-2 -ml-2 rounded-lg hover:bg-[var(--bg-overlay)] lg:hidden text-[var(--text-secondary)]"
-              onClick={toggleSidebar}
-              aria-label="Toggle Menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+        <header className="topbar">
+          <button
+            className="topbar__icon-btn lg:hidden"
+            onClick={toggleSidebar}
+            aria-label="Menu"
+          >
+            ☰
+          </button>
 
-            {/* Breadcrumbs */}
-            <nav className="hidden md:flex items-center gap-2 text-xs font-medium text-[var(--text-secondary)]">
-              <Link href="/dashboard" className="hover:text-[var(--text-primary)] transition-colors">Payd AI</Link>
-              {getBreadcrumbs().map((crumb) => (
-                <React.Fragment key={crumb.href}>
-                  <svg className="w-3 h-3 text-[var(--text-disabled)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                  <Link
-                    href={crumb.href}
-                    className={`hover:text-[var(--text-primary)] transition-colors ${crumb.isLast ? 'text-[var(--text-primary)] font-bold' : ''}`}
-                  >
-                    {crumb.label}
-                  </Link>
-                </React.Fragment>
-              ))}
-            </nav>
+          <div className="topbar__search">
+            <span className="topbar__search-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M10 10l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </span>
+            <input className="topbar__search-input" type="search" placeholder="Search invoices, clients…" />
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-full px-3 py-1 text-xs text-[var(--text-secondary)]">
-              <span className="w-2 h-2 rounded-full bg-[var(--status-success)] mr-2 animate-pulse" />
-              AI Status: Optimal
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                className="p-2 rounded-full border border-[var(--border-default)] hover:bg-[var(--bg-overlay)] text-[var(--text-secondary)] transition-all"
-                aria-label="Search"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-              <button
-                className="p-2 rounded-full border border-[var(--border-default)] hover:bg-[var(--bg-overlay)] text-[var(--text-secondary)] relative transition-all"
-                aria-label="Notifications"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                <span className="absolute top-2 right-2 w-2 h-2 bg-[var(--brand-primary)] rounded-full border border-[var(--bg-surface)]" />
-              </button>
-            </div>
-
-            <div className="h-8 w-px bg-[var(--border-subtle)] mx-1" />
-
-            <Link href="/invoices/new">
-              <Button variant="brand-primary" size="sm" className="hidden sm:flex">
-                + New Invoice
-              </Button>
-            </Link>
-
-            <button
+          <div className="topbar__actions">
+            <button className="topbar__icon-btn hidden sm:flex" aria-label="Notifications">
+              🔔
+              <span className="topbar__notif-dot"></span>
+            </button>
+            <Link className="btn btn-primary btn-sm" href="/invoices/new">+ New Invoice</Link>
+            <div
+              className="sidebar__user-avatar cursor-pointer"
               onClick={handleLogout}
-              className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-cta)] flex items-center justify-center font-bold text-black text-xs flex-shrink-0"
               title="Sign out"
             >
               {user?.name.charAt(0).toUpperCase() || 'U'}
-            </button>
+            </div>
           </div>
         </header>
 
-        {/* Page Header (Mobile Optimized) */}
-        <div className="px-6 py-8 border-b border-[var(--border-subtle)] animate-fade-in bg-gradient-to-b from-[var(--bg-surface)] to-transparent">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">{getPageTitle()}</h1>
-              <p className="text-[var(--text-secondary)] font-medium">
+        {/* Page content */}
+        <main className="page-content animate-fade-up">
+          <div className="page-header">
+            <div>
+              <h1 className="page-header__title">{getPageTitle()}</h1>
+              <p className="page-header__sub">
                 {user ? `Welcome back, ${user.name} 👋` : 'Loading account details...'}
               </p>
             </div>
-            <div className="flex gap-3">
-              <Button variant="ghost" size="md">
-                Export Data
-              </Button>
-              <Button variant="brand-cta" size="md">
-                + New Action
-              </Button>
+            <div className="flex gap-2">
+              <button className="btn btn-secondary btn-sm">Export</button>
+              <button className="btn btn-primary btn-sm">+ New Action</button>
             </div>
           </div>
-        </div>
 
-        {/* Page content */}
-        <main className="flex-1 p-6 overflow-y-auto animate-fade-up">
           {children}
         </main>
       </div>

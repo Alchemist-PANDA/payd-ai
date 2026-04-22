@@ -58,7 +58,7 @@ export function useToast() {
 function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) {
   return (
     <div
-      className="fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"
+      className="fixed top-4 right-4 z-50 flex flex-col gap-3 pointer-events-none"
       style={{ maxWidth: '420px' }}
     >
       {toasts.map((toast) => (
@@ -71,9 +71,9 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
 function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
   const typeConfig = {
     success: {
-      bg: 'bg-[var(--status-success)]/10',
-      border: 'border-[var(--status-success)]/30',
-      color: 'text-[var(--status-success)]',
+      bg: 'var(--success-bg)',
+      border: 'rgba(34, 197, 94, 0.3)',
+      color: 'var(--success)',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -81,9 +81,9 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       ),
     },
     error: {
-      bg: 'bg-[var(--status-error)]/10',
-      border: 'border-[var(--status-error)]/30',
-      color: 'text-[var(--status-error)]',
+      bg: 'var(--danger-bg)',
+      border: 'rgba(239, 68, 68, 0.3)',
+      color: 'var(--danger)',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -91,9 +91,9 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       ),
     },
     warning: {
-      bg: 'bg-[var(--status-warning)]/10',
-      border: 'border-[var(--status-warning)]/30',
-      color: 'text-[var(--status-warning)]',
+      bg: 'var(--warning-bg)',
+      border: 'rgba(245, 158, 11, 0.3)',
+      color: 'var(--warning)',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -101,9 +101,9 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       ),
     },
     info: {
-      bg: 'bg-[var(--status-info)]/10',
-      border: 'border-[var(--status-info)]/30',
-      color: 'text-[var(--status-info)]',
+      bg: 'var(--info-bg)',
+      border: 'rgba(59, 130, 246, 0.3)',
+      color: 'var(--info)',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -118,13 +118,15 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
     <div
       role="alert"
       aria-live="polite"
-      className={`
-        animate-fade-in pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-lg backdrop-blur-md border
-        ${config.bg} ${config.border} ${config.color}
-      `}
+      className="slide-in-right pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-lg backdrop-blur-sm"
+      style={{
+        background: config.bg,
+        border: `1px solid ${config.border}`,
+        color: config.color,
+      }}
     >
       <div className="flex-shrink-0 mt-0.5">{config.icon}</div>
-      <p className="flex-1 text-sm font-medium text-[var(--text-primary)]">
+      <p className="flex-1 text-small" style={{ color: 'var(--text-primary)' }}>
         {toast.message}
       </p>
       <button

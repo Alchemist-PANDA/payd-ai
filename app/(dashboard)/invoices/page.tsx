@@ -8,7 +8,7 @@ import { InvoicesService } from '../../../src/services/invoices/InvoicesService'
 import { getCurrentAccount } from '../../../src/lib/supabase/client';
 import { trackEvent } from '../../../src/lib/telemetry';
 import { Button } from '../../../components/ui/Button';
-import { BadgeStatus } from '../../../components/ui/Badge';
+import { Badge, BadgeStatus } from '../../../components/ui/Badge';
 import { useToast } from '../../../components/ui/Toast';
 import { SkeletonTableRow } from '../../../components/ui/Skeleton';
 import { InvoiceTable, type Invoice } from '../../../components/invoice/InvoiceTable';
@@ -19,7 +19,7 @@ const Modal = dynamic(() => import('../../../components/ui/Modal').then(mod => (
 });
 
 const UploadZone = dynamic(() => import('../../../components/upload/UploadZone').then(mod => ({ default: mod.UploadZone })), {
-  loading: () => <div className="h-64 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] animate-pulse" />,
+  loading: () => <div className="skeleton h-64 rounded-lg" />,
   ssr: false
 });
 
@@ -57,7 +57,7 @@ export default function InvoicesPage() {
         const account = await getCurrentAccount();
         if (mounted && account) {
           setAccountId(account.id);
-          await loadInvoices(account.id);
+          loadInvoices(account.id);
           trackEvent(account.id, 'invoices_page_viewed');
         }
       } catch (err: any) {
@@ -129,14 +129,8 @@ export default function InvoicesPage() {
   if (isLoading) {
     return (
       <AppShell>
-        <div className="space-y-8 animate-fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="h-32 bg-[var(--bg-surface)] rounded-[var(--radius-xl)] animate-pulse border border-[var(--border-subtle)]" />
-            <div className="h-32 bg-[var(--bg-surface)] rounded-[var(--radius-xl)] animate-pulse border border-[var(--border-subtle)]" />
-            <div className="h-32 bg-[var(--bg-surface)] rounded-[var(--radius-xl)] animate-pulse border border-[var(--border-subtle)]" />
-            <div className="h-32 bg-[var(--bg-surface)] rounded-[var(--radius-xl)] animate-pulse border border-[var(--border-subtle)]" />
-          </div>
-          <div className="h-96 bg-[var(--bg-surface)] rounded-[var(--radius-xl)] animate-pulse border border-[var(--border-subtle)]" />
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin w-8 h-8 border-2 border-[#00D4AA] border-t-transparent rounded-full" />
         </div>
       </AppShell>
     );
@@ -144,107 +138,84 @@ export default function InvoicesPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 animate-fade-in">
+      <div className="p-4 md:p-6 space-y-8 bg-[#0A0B0E] min-h-screen text-white">
         {/* Bento Grid Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="glass-card p-6 border border-[var(--border-subtle)] group">
+          <div className="bg-[#0F1115] p-6 rounded-2xl border border-[#1F242F] shadow-lg hover:border-[#00D4AA] transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-widest">Total Outstanding</span>
-              <div className="p-2 rounded-lg bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] group-hover:scale-110 transition-transform">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+              <span className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Total Outstanding</span>
+              <span className="text-xl">💰</span>
             </div>
-            <div className="text-3xl font-mono font-bold text-[var(--text-primary)]">{formatCurrency(totals.pending + totals.overdue)}</div>
-            <div className="mt-4 flex items-center justify-between">
-               <span className="text-xs text-[var(--text-secondary)]">{invoices.length} total invoices</span>
-               <span className="text-[10px] font-bold text-[var(--status-info)] bg-[var(--status-info)]/10 px-2 py-0.5 rounded-full uppercase">Healthy</span>
+            <div className="text-3xl font-bold text-white">{formatCurrency(totals.pending + totals.overdue)}</div>
+            <div className="mt-2 text-xs text-[#00D4AA] font-medium bg-[#00D4AA]/10 inline-block px-2 py-1 rounded-full">
+              {invoices.length} total invoices
             </div>
           </div>
 
-          <div className="glass-card p-6 border border-[var(--border-subtle)] group">
+          <div className="bg-[#0F1115] p-6 rounded-2xl border border-[#1F242F] shadow-lg hover:border-[#FF4D4F] transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-widest">Overdue</span>
-              <div className="p-2 rounded-lg bg-[var(--status-error)]/10 text-[var(--status-error)] group-hover:scale-110 transition-transform">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
+              <span className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Overdue</span>
+              <span className="text-xl">⚠️</span>
             </div>
-            <div className="text-3xl font-mono font-bold text-[var(--status-error)]">{formatCurrency(totals.overdue)}</div>
-            <div className="mt-4 flex items-center justify-between">
-               <span className="text-xs text-[var(--text-secondary)]">Action required</span>
-               <span className="text-[10px] font-bold text-[var(--status-error)] bg-[var(--status-error)]/10 px-2 py-0.5 rounded-full uppercase">Critical</span>
+            <div className="text-3xl font-bold text-[#FF4D4F]">{formatCurrency(totals.overdue)}</div>
+            <div className="mt-2 text-xs text-[#FF4D4F] font-medium bg-[#FF4D4F]/10 inline-block px-2 py-1 rounded-full">
+              Action required
             </div>
           </div>
 
-          <div className="glass-card p-6 border border-[var(--border-subtle)] group">
+          <div className="bg-[#0F1115] p-6 rounded-2xl border border-[#1F242F] shadow-lg hover:border-[#30D158] transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-widest">Paid (MTD)</span>
-              <div className="p-2 rounded-lg bg-[var(--status-success)]/10 text-[var(--status-success)] group-hover:scale-110 transition-transform">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+              <span className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Paid (MTD)</span>
+              <span className="text-xl">✅</span>
             </div>
-            <div className="text-3xl font-mono font-bold text-[var(--status-success)]">{formatCurrency(totals.paid)}</div>
-            <div className="mt-4 flex items-center justify-between">
-               <span className="text-xs text-[var(--text-secondary)]">AI-recovered cashflow</span>
-               <span className="text-[10px] font-bold text-[var(--status-success)] bg-[var(--status-success)]/10 px-2 py-0.5 rounded-full uppercase">+12% vs last month</span>
+            <div className="text-3xl font-bold text-[#30D158]">{formatCurrency(totals.paid)}</div>
+            <div className="mt-2 text-xs text-[#30D158] font-medium bg-[#30D158]/10 inline-block px-2 py-1 rounded-full">
+              Recovered by AI
             </div>
           </div>
 
-          <div className="glass-card p-6 border border-[var(--border-subtle)] group overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--brand-cta)]/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
+          <div className="bg-[#0F1115] p-6 rounded-2xl border border-[#1F242F] shadow-lg hover:border-[#00D4AA] transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-widest">Efficiency</span>
-              <div className="p-2 rounded-lg bg-[var(--brand-cta)]/10 text-[var(--brand-cta)] relative z-10">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
+              <span className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Efficiency</span>
+              <span className="text-xl">📈</span>
             </div>
-            <div className="text-3xl font-mono font-bold text-[var(--text-primary)] relative z-10">94%</div>
-            <div className="mt-4 flex items-center justify-between relative z-10">
-               <span className="text-xs text-[var(--text-secondary)]">Optimal UI health</span>
-               <span className="text-[10px] font-bold text-[var(--brand-cta)] bg-[var(--brand-cta)]/10 px-2 py-0.5 rounded-full uppercase">Level: Pro</span>
+            <div className="text-3xl font-bold text-[#00D4AA]">94%</div>
+            <div className="mt-2 text-xs text-[#00D4AA] font-medium bg-[#00D4AA]/10 inline-block px-2 py-1 rounded-full">
+              Optimal health
             </div>
           </div>
         </div>
 
-        {/* Portfolio Table */}
-        <div className="space-y-4">
-           <div className="flex items-center justify-between px-2">
-              <div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)]">Invoice Portfolio</h2>
-                <p className="text-xs text-[var(--text-secondary)] font-medium">Manage and track your global receivables with AI precision</p>
-              </div>
-              <div className="flex gap-3">
-                 <Button variant="ghost" size="sm" onClick={() => window.print()}>
-                   Download PDF
-                 </Button>
-                 <Button
-                   variant="brand-primary"
-                   size="sm"
-                   data-testid="import-button"
-                   onClick={() => setShowUploadModal(true)}
-                 >
-                   Import CSV
-                 </Button>
-              </div>
-           </div>
+        {/* Main Table Section */}
+        <div className="bg-[#0F1115] rounded-2xl border border-[#1F242F] shadow-xl overflow-hidden">
+          <div className="p-6 border-b border-[#1F242F] flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">Invoice Portfolio</h2>
+              <p className="text-sm text-gray-400 mt-1">Manage and track your global receivables</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button variant="secondary" size="sm" className="bg-[#1F242F] border-none hover:bg-[#2D3441] text-white">
+                Download PDF
+              </Button>
+              <Button variant="primary" size="sm" onClick={() => setShowUploadModal(true)} className="bg-[#00D4AA] hover:bg-[#00B894] text-black font-bold">
+                Import CSV
+              </Button>
+            </div>
+          </div>
 
-           <InvoiceTable
-             invoices={invoices}
-             onBulkAction={(action, ids) => {
-               addToast('info', `Bulk ${action} for ${ids.length} items queued`);
-             }}
-           />
+          <div className="overflow-x-auto">
+            <InvoiceTable
+              invoices={invoices}
+              onBulkAction={(action, ids) => {
+                console.log('Bulk action:', action, ids);
+                addToast('info', `Bulk ${action} for ${ids.length} items`);
+              }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Modern Upload Modal */}
+      {/* Upload Modal */}
       <Modal
         isOpen={showUploadModal}
         onClose={() => {
@@ -252,101 +223,90 @@ export default function InvoicesPage() {
           setImportStatus('idle');
           setPreviewRows([]);
         }}
-        title="Import Receivables"
+        title="Import Invoices"
         size="xl"
         footer={
           (importStatus === 'previewing' || importStatus === 'committing') && (
             <div className="flex gap-3">
-              <Button variant="ghost" onClick={() => setImportStatus('idle')}>
+              <Button variant="ghost" size="sm" onClick={() => setImportStatus('idle')} className="text-gray-400 hover:text-white">
                 Cancel
               </Button>
               <Button
-                variant="brand-primary"
+                variant="primary"
+                size="sm"
                 onClick={handleCommit}
                 loading={importStatus === 'committing'}
                 disabled={previewRows.filter(r => r.is_valid).length === 0}
+                className="bg-[#00D4AA] hover:bg-[#00B894] text-black font-bold px-6"
               >
-                Confirm & Import
+                Confirm Import
               </Button>
             </div>
           )
         }
       >
-        <div className="space-y-8 p-1">
+        <div className="p-6 bg-[#0F1115]">
           {importStatus === 'idle' && (
             <div className="space-y-6">
               <UploadZone onFileSelect={handleFileSelect} />
-              <div className="bg-[var(--bg-base)] p-4 rounded-xl border border-[var(--border-default)] flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-[var(--status-info)]/10 text-[var(--status-info)]">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-[var(--text-primary)]">CSV Format Requirements</h4>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">
-                    Your CSV must include headers: <code className="text-[var(--brand-primary)] bg-[var(--bg-overlay)] px-1 rounded">invoice_number</code>, <code className="text-[var(--brand-primary)] bg-[var(--bg-overlay)] px-1 rounded">contact_name</code>, <code className="text-[var(--brand-primary)] bg-[var(--bg-overlay)] px-1 rounded">amount</code>, and <code className="text-[var(--brand-primary)] bg-[var(--bg-overlay)] px-1 rounded">due_date</code>.
-                  </p>
-                </div>
+              <div className="bg-[#0A0B0E] p-4 rounded-xl border border-[#1F242F]">
+                <p className="text-sm text-gray-400 flex items-center gap-2">
+                  <span className="text-[#00D4AA]">ℹ️</span>
+                  <strong>CSV Requirements:</strong> invoice_number, contact_name, amount, due_date
+                </p>
               </div>
             </div>
           )}
 
           {(importStatus === 'previewing' || importStatus === 'committing') && (
             <div className="space-y-6 animate-fade-in">
-              <div className="flex items-center justify-between bg-[var(--bg-base)] p-4 rounded-xl border border-[var(--border-subtle)]">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[var(--brand-primary)]/10 flex items-center justify-center text-[var(--brand-primary)] font-bold font-mono">
-                    {previewRows.filter(r => r.is_valid).length}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[var(--text-primary)]">Ready to Sync</h3>
-                    <p className="text-xs text-[var(--text-secondary)]">Found {previewRows.length} total rows in CSV payload</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-[var(--status-success)] bg-[var(--status-success)]/10 px-2 py-1 rounded-md uppercase">
-                    {previewRows.filter(r => r.is_valid).length} Valid
-                  </span>
-                  {previewRows.filter(r => !r.is_valid).length > 0 && (
-                    <span className="text-[10px] font-bold text-[var(--status-error)] bg-[var(--status-error)]/10 px-2 py-1 rounded-md uppercase">
-                      {previewRows.filter(r => !r.is_valid).length} Errors
+              <div className="flex items-center justify-between bg-[#0A0B0E] p-4 rounded-xl border border-[#1F242F]">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Preview Import</h3>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-xs font-medium text-[#30D158] bg-[#30D158]/10 px-2 py-0.5 rounded-full">
+                      {previewRows.filter(r => r.is_valid).length} valid
                     </span>
-                  )}
+                    <span className="text-xs font-medium text-[#FF4D4F] bg-[#FF4D4F]/10 px-2 py-0.5 rounded-full">
+                      {previewRows.filter(r => !r.is_valid).length} errors
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--border-subtle)] overflow-hidden">
-                <div className="overflow-x-auto max-h-[400px]">
+              <div className="bg-[#0A0B0E] rounded-xl border border-[#1F242F] overflow-hidden">
+                <div className="overflow-x-auto max-h-[450px]">
                   <table className="w-full text-left border-collapse">
-                    <thead className="sticky top-0 z-20 bg-[var(--bg-surface)]">
-                      <tr className="border-b border-[var(--border-default)]">
-                        <th className="p-4 text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-wider">Invoice #</th>
-                        <th className="p-4 text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-wider">Contact Name</th>
-                        <th className="p-4 text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-wider text-right">Amount</th>
-                        <th className="p-4 text-[10px] font-bold text-[var(--text-disabled)] uppercase tracking-wider text-center">Status</th>
+                    <thead className="sticky top-0 z-20 bg-[#1F242F]">
+                      <tr>
+                        <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-[#2D3441]">Invoice #</th>
+                        <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-[#2D3441]">Contact</th>
+                        <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-[#2D3441] text-right">Amount</th>
+                        <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-[#2D3441]">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[var(--border-subtle)]">
+                    <tbody className="divide-y divide-[#1F242F]">
                       {previewRows.map((row, i) => {
-                        const data = row.data as any;
-                        const invNum = data.invoice_number || data['Invoice Number'] || data['Invoice #'] || '-';
-                        const contactName = data.contact_name || data['Contact Name'] || data['Contact'] || data['Name'] || '-';
-                        const amount = data.amount || data['Amount'] || data['Total'] || 0;
+                        const invNum = row.data.invoice_number || (row.data as any)['Invoice Number'] || (row.data as any)['Invoice #'] || '-';
+                        const contactName = row.data.contact_name || (row.data as any)['Contact Name'] || (row.data as any)['Contact'] || (row.data as any)['Name'] || '-';
+                        const amount = row.data.amount || (row.data as any)['Amount'] || (row.data as any)['Total'] || 0;
 
                         return (
-                          <tr key={i} className={`hover:bg-[var(--bg-overlay)]/50 transition-colors ${!row.is_valid ? 'bg-[var(--status-error)]/[0.03]' : ''}`}>
-                            <td className="p-4 text-sm font-mono font-bold text-[var(--text-primary)]">{invNum}</td>
-                            <td className="p-4 text-sm text-[var(--text-secondary)]">{contactName}</td>
-                            <td className="p-4 text-sm font-mono font-bold text-[var(--text-primary)] text-right">
+                          <tr key={i} className={`hover:bg-[#1F242F]/50 transition-colors ${!row.is_valid ? 'bg-[#FF4D4F]/5' : ''}`}>
+                            <td className="p-4 text-sm font-medium text-white">{invNum}</td>
+                            <td className="p-4 text-sm text-gray-400">{contactName}</td>
+                            <td className="p-4 text-sm font-bold text-white text-right">
                               {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount))}
                             </td>
-                            <td className="p-4 text-center">
+                            <td className="p-4">
                               {row.is_valid ? (
-                                <Badge status="success">Ready</Badge>
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#30D158]/10 text-[#30D158]">
+                                  Ready
+                                </span>
                               ) : (
-                                <Badge status="danger">{row.is_duplicate ? 'Duplicate' : 'Invalid'}</Badge>
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FF4D4F]/10 text-[#FF4D4F]">
+                                  {row.is_duplicate ? 'Duplicate' : 'Invalid'}
+                                </span>
                               )}
                             </td>
                           </tr>
