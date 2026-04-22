@@ -69,17 +69,18 @@ export function Modal({ isOpen, onClose, title, children, footer, size = 'md' }:
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
-        className={`w-full ${sizeClasses[size]} rounded-2xl popIn`}
+        className={`w-full ${sizeClasses[size]} rounded-2xl popIn flex flex-col`}
         style={{
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-default)',
           boxShadow: 'var(--shadow-modal)',
+          maxHeight: '90vh'
         }}
       >
         {/* Header */}
         {title && (
           <div
-            className="flex items-center justify-between p-6 border-b"
+            className="flex items-center justify-between p-6 border-b flex-shrink-0"
             style={{ borderColor: 'var(--border-subtle)' }}
           >
             <h2 id="modal-title" className="text-h2">
@@ -104,12 +105,20 @@ export function Modal({ isOpen, onClose, title, children, footer, size = 'md' }:
         )}
 
         {/* Body */}
-        <div className="p-6">{children}</div>
+        <div
+          className="p-6 overflow-y-auto flex-1 min-h-0"
+          style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'var(--border-medium) transparent'
+          }}
+        >
+          {children}
+        </div>
 
         {/* Footer */}
         {footer && (
           <div
-            className="flex items-center justify-end gap-3 p-6 border-t"
+            className="flex items-center justify-end gap-3 p-6 border-t flex-shrink-0"
             style={{ borderColor: 'var(--border-subtle)' }}
           >
             {footer}

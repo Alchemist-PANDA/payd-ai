@@ -62,137 +62,100 @@ export function InvoiceTable({ invoices, onRowClick, onBulkAction }: InvoiceTabl
   ];
 
   return (
-    <div>
-      {/* Filter Tabs */}
-      <div className="flex gap-2 mb-6 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
-        {filters.map(filter => (
-          <button
-            key={filter.value}
-            onClick={() => setActiveFilter(filter.value)}
-            className={`px-4 py-2 text-small font-medium transition-all duration-200 border-b-2 ${
-              activeFilter === filter.value
-                ? 'border-[var(--accent)] text-[var(--text-primary)]'
-                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-            }`}
-          >
-            {filter.label}
-          </button>
-        ))}
+    <div className="glass-card data-card">
+      <div className="data-card__header">
+        <div className="flex gap-2">
+          {filters.map(filter => (
+            <button
+              key={filter.value}
+              onClick={() => setActiveFilter(filter.value)}
+              className={`navbar__link ${
+                activeFilter === filter.value
+                  ? 'navbar__link--active bg-[var(--border-subtle)]'
+                  : ''
+              }`}
+              style={{ cursor: 'pointer', border: 'none' }}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+           {selectedIds.size > 0 && (
+             <Button variant="ghost" size="sm" onClick={() => onBulkAction?.('approve', Array.from(selectedIds))}>
+               Approve Selected ({selectedIds.size})
+             </Button>
+           )}
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      <div style={{ overflowX: 'auto' }}>
+        <table className="data-table">
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-              <th className="w-10 px-4 py-3">
+            <tr>
+              <th className="w-10">
                 <input
                   type="checkbox"
                   checked={selectedIds.size === filteredInvoices.length && filteredInvoices.length > 0}
                   onChange={toggleSelectAll}
-                  className="w-4 h-4 rounded accent-[var(--accent)]"
+                  className="w-4 h-4 rounded"
                 />
               </th>
-              <th className="text-left px-4 py-3 text-label" style={{ color: 'var(--text-secondary)' }}>
-                Company
-              </th>
-              <th className="text-left px-4 py-3 text-label" style={{ color: 'var(--text-secondary)' }}>
-                Contact
-              </th>
-              <th className="text-right px-4 py-3 text-label" style={{ color: 'var(--text-secondary)' }}>
-                Amount
-              </th>
-              <th className="text-left px-4 py-3 text-label" style={{ color: 'var(--text-secondary)' }}>
-                Due Date
-              </th>
-              <th className="text-left px-4 py-3 text-label" style={{ color: 'var(--text-secondary)' }}>
-                Status
-              </th>
-              <th className="text-right px-4 py-3 text-label" style={{ color: 'var(--text-secondary)' }}>
-                Action
-              </th>
+              <th>Company</th>
+              <th>Contact</th>
+              <th className="text-right">Amount</th>
+              <th>Due Date</th>
+              <th>Status</th>
+              <th className="text-right">Action</th>
             </tr>
           </thead>
           <tbody>
             {filteredInvoices.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12">
-                  <div style={{ color: 'var(--text-muted)' }}>
-                    <p className="text-body mb-4">No invoices found</p>
-                    <Button variant="secondary">Upload CSV</Button>
-                  </div>
+                <td colSpan={7} className="text-center py-12 text-secondary">
+                  No invoices found
                 </td>
               </tr>
             ) : (
               filteredInvoices.map((invoice) => (
                 <React.Fragment key={invoice.id}>
                   <tr
-                    className="cursor-pointer transition-all duration-200"
-                    style={{
-                      borderBottom: '1px solid var(--border-subtle)',
-                      background: selectedIds.has(invoice.id) ? 'var(--bg-highlight)' : 'transparent',
-                      borderLeft: selectedIds.has(invoice.id) ? '2px solid var(--accent)' : '2px solid transparent',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!selectedIds.has(invoice.id)) {
-                        e.currentTarget.style.background = 'var(--bg-highlight)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!selectedIds.has(invoice.id)) {
-                        e.currentTarget.style.background = 'transparent';
-                      }
-                    }}
+                    className="cursor-pointer"
                     onClick={() => setExpandedId(expandedId === invoice.id ? null : invoice.id)}
                   >
-                    <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                    <td onClick={(e) => e.stopPropagation()}>
                       <input
                         type="checkbox"
                         checked={selectedIds.has(invoice.id)}
                         onChange={() => toggleSelect(invoice.id)}
-                        className="w-4 h-4 rounded accent-[var(--accent)]"
+                        className="w-4 h-4 rounded"
                       />
                     </td>
-                    <td className="px-4 py-4 text-body" style={{ color: 'var(--text-primary)' }}>
-                      {invoice.company}
-                    </td>
-                    <td className="px-4 py-4 text-small" style={{ color: 'var(--text-secondary)' }}>
-                      {invoice.contact}
-                    </td>
-                    <td className="px-4 py-4 text-right text-mono" style={{ color: 'var(--text-primary)' }}>
-                      {formatCurrency(invoice.amount)}
-                    </td>
-                    <td className="px-4 py-4 text-small" style={{ color: 'var(--text-secondary)' }}>
-                      {invoice.dueDate}
-                    </td>
-                    <td className="px-4 py-4">
+                    <td><strong>{invoice.company}</strong></td>
+                    <td className="text-secondary">{invoice.contact}</td>
+                    <td className="text-right"><strong>{formatCurrency(invoice.amount)}</strong></td>
+                    <td className="text-secondary">{invoice.dueDate}</td>
+                    <td>
                       <Badge status={invoice.status} />
                     </td>
-                    <td className="px-4 py-4 text-right">
-                      <Button variant="ghost" onClick={(e) => {
+                    <td className="text-right">
+                      <Button variant="ghost" size="sm" onClick={(e) => {
                         e.stopPropagation();
                         onRowClick?.(invoice);
                       }}>
-                        View Draft
+                        View
                       </Button>
                     </td>
                   </tr>
                   {expandedId === invoice.id && (
-                    <tr>
-                      <td colSpan={7} className="px-4 py-0">
-                        <div className="row-expand open py-4">
-                          <div
-                            className="p-4 rounded-lg"
-                            style={{
-                              background: 'var(--bg-elevated)',
-                              border: '1px solid var(--border-subtle)',
-                            }}
-                          >
-                            <p className="text-small" style={{ color: 'var(--text-secondary)' }}>
-                              Email preview would appear here
-                            </p>
-                          </div>
-                        </div>
+                    <tr className="bg-[var(--surface-bg)]">
+                      <td colSpan={7} className="px-8 py-4">
+                         <div className="glass-card p-4 animate-fade-in">
+                            <div className="text-label mb-2">Internal Notes</div>
+                            <div className="text-small text-secondary">
+                              Invoice ID: {invoice.id} • Last reminded: N/A
+                            </div>
+                         </div>
                       </td>
                     </tr>
                   )}
@@ -202,33 +165,6 @@ export function InvoiceTable({ invoices, onRowClick, onBulkAction }: InvoiceTabl
           </tbody>
         </table>
       </div>
-
-      {/* Bulk Actions Bar */}
-      {selectedIds.size > 0 && (
-        <div
-          className="fixed bottom-0 left-0 right-0 p-4 flex items-center justify-between slide-in-right"
-          style={{
-            background: 'var(--bg-elevated)',
-            borderTop: '1px solid var(--border-default)',
-            boxShadow: 'var(--shadow-modal)',
-          }}
-        >
-          <span className="text-body" style={{ color: 'var(--text-primary)' }}>
-            {selectedIds.size} invoice{selectedIds.size > 1 ? 's' : ''} selected
-          </span>
-          <div className="flex gap-3">
-            <Button variant="ghost" onClick={() => setSelectedIds(new Set())}>
-              Clear
-            </Button>
-            <Button variant="secondary" onClick={() => onBulkAction?.('export', Array.from(selectedIds))}>
-              Export
-            </Button>
-            <Button variant="primary" onClick={() => onBulkAction?.('approve', Array.from(selectedIds))}>
-              Approve All
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

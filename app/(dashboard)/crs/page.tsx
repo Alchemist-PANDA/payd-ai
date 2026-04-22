@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppShell } from '../../../components/layout/AppShell';
-import { StatCard } from '../../../components/ui/StatCard';
 import { Badge } from '../../../components/ui/Badge';
 import { getGradeColor, scoreToGrade, CRSDetail } from '@/packages/shared/src/types/crs';
 import { supabase } from '../../../src/lib/supabase/client';
@@ -69,16 +68,16 @@ export default function CRSDashboardPage() {
   }, []);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'var(--success)';
-    if (score >= 60) return 'var(--warning)';
-    return 'var(--danger)';
+    if (score >= 80) return 'var(--brand-secondary)';
+    if (score >= 60) return 'var(--brand-accent)';
+    return 'var(--brand-danger)';
   };
 
   if (isLoading) {
     return (
       <AppShell>
         <div className="flex items-center justify-center h-64">
-          <div className="spin w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full" />
+          <div className="spin w-8 h-8 border-2 border-[var(--brand-primary)] border-t-transparent rounded-full" />
         </div>
       </AppShell>
     );
@@ -86,109 +85,89 @@ export default function CRSDashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 page-enter">
-        {/* Header */}
-        <div>
-          <h1 className="text-h1">Client Reliability Score</h1>
-          <p className="text-body mt-2" style={{ color: 'var(--text-secondary)' }}>
-            Track payment behavior and reliability across your client base
-          </p>
-        </div>
-
+      <div className="space-y-6 page-enter">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard
-            label="Average CRS"
-            value={`${avgScore}/100`}
-            delta={avgScore >= 70 ? 'Healthy' : 'Needs attention'}
-            deltaType={avgScore >= 70 ? 'positive' : 'negative'}
-          />
-          <StatCard
-            label="Total Clients"
-            value={clients.length.toString()}
-          />
-          <StatCard
-            label="High Risk Clients"
-            value={highRiskCount.toString()}
-            delta={highRiskCount > 0 ? 'Requires monitoring' : 'All clear'}
-            deltaType={highRiskCount > 0 ? 'negative' : 'positive'}
-          />
+        <div className="stat-grid">
+          <div className="glass-card stat-card">
+            <div className="stat-card__label">
+              Average CRS
+              <span style={{ fontSize: '1rem' }}>📈</span>
+            </div>
+            <div className="stat-card__value">{avgScore}/100</div>
+            <span className={`stat-card__change ${avgScore >= 70 ? 'stat-card__change--up' : 'stat-card__change--down'}`}>
+              {avgScore >= 70 ? 'Healthy' : 'Needs attention'}
+            </span>
+          </div>
+          <div className="glass-card stat-card">
+            <div className="stat-card__label">
+              Total Clients
+              <span style={{ fontSize: '1rem' }}>👥</span>
+            </div>
+            <div className="stat-card__value">{clients.length}</div>
+            <span className="stat-card__change stat-card__change--up">Tracking actively</span>
+          </div>
+          <div className="glass-card stat-card">
+            <div className="stat-card__label">
+              High Risk Clients
+              <span style={{ fontSize: '1rem' }}>⚠️</span>
+            </div>
+            <div className="stat-card__value" style={{ color: highRiskCount > 0 ? 'var(--brand-danger)' : 'var(--text-primary)' }}>
+              {highRiskCount}
+            </div>
+            <span className={`stat-card__change ${highRiskCount > 0 ? 'stat-card__change--down' : 'stat-card__change--up'}`}>
+              {highRiskCount > 0 ? 'Requires monitoring' : 'All clear'}
+            </span>
+          </div>
         </div>
 
         {/* Client List */}
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{
-            background: 'var(--bg-surface)',
-            border: '1px solid var(--border-subtle)',
-            boxShadow: 'var(--shadow-card)',
-          }}
-        >
-          {clients.length === 0 ? (
-            <div className="p-12 text-center">
-              <p className="text-body" style={{ color: 'var(--text-muted)' }}>
-                No CRS data available yet. Import invoices to start tracking client reliability.
-              </p>
-            </div>
-          ) : (
-            <table className="w-full">
+        <div className="glass-card data-card">
+          <div className="data-card__header">
+            <div className="data-card__title">Client Reliability Scores</div>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="data-table">
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                  <th className="px-6 py-4 text-left text-label" style={{ color: 'var(--text-secondary)' }}>
-                    Client
-                  </th>
-                  <th className="px-6 py-4 text-left text-label" style={{ color: 'var(--text-secondary)' }}>
-                    CRS Score
-                  </th>
-                  <th className="px-6 py-4 text-left text-label" style={{ color: 'var(--text-secondary)' }}>
-                    Grade
-                  </th>
-                  <th className="px-6 py-4 text-left text-label" style={{ color: 'var(--text-secondary)' }}>
-                    Last Updated
-                  </th>
+                <tr>
+                  <th>Client</th>
+                  <th>CRS Score</th>
+                  <th>Grade</th>
+                  <th>Last Updated</th>
                 </tr>
               </thead>
               <tbody>
-                {clients.map((client) => (
-                  <tr
-                    key={client.contact_id}
-                    className="transition-all duration-200"
-                    style={{ borderBottom: '1px solid var(--border-subtle)' }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'var(--bg-highlight)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
-                    }}
-                  >
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="text-body font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {client.contact_name}
-                        </div>
-                        <div className="text-small" style={{ color: 'var(--text-secondary)' }}>
-                          {client.contact_email}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-mono-lg" style={{ color: getScoreColor(client.crs_score) }}>
-                        {client.crs_score}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <Badge status={client.crs_score >= 80 ? 'paid' : client.crs_score >= 60 ? 'pending' : 'overdue'}>
-                        {client.grade}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 text-small" style={{ color: 'var(--text-secondary)' }}>
-                      {new Date(client.last_updated).toLocaleDateString()}
+                {clients.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-12 text-secondary">
+                      No CRS data available yet. Import invoices to start tracking client reliability.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  clients.map((client) => (
+                    <tr key={client.contact_id} className="cursor-pointer">
+                      <td>
+                        <div className="text-body font-medium">{client.contact_name}</div>
+                        <div className="text-small text-secondary">{client.contact_email}</div>
+                      </td>
+                      <td>
+                        <span className="text-mono font-bold text-lg" style={{ color: getScoreColor(client.crs_score) }}>
+                          {client.crs_score}
+                        </span>
+                      </td>
+                      <td>
+                        <Badge status={client.crs_score >= 80 ? 'paid' : client.crs_score >= 60 ? 'pending' : 'overdue'}>
+                          {client.grade}
+                        </Badge>
+                      </td>
+                      <td className="text-secondary text-small">
+                        {new Date(client.last_updated).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
-          )}
+          </div>
         </div>
       </div>
     </AppShell>

@@ -97,8 +97,8 @@ export default function ClientPromiseTimelinePage({ params }: { params: { id: st
   if (isLoading) {
     return (
       <AppShell>
-        <div className="flex justify-center items-center py-12">
-          <span className="text-gray-400">Loading promise timeline...</span>
+        <div className="flex items-center justify-center h-64">
+          <div className="spin w-8 h-8 border-2 border-[var(--brand-primary)] border-t-transparent rounded-full" />
         </div>
       </AppShell>
     );
@@ -108,7 +108,7 @@ export default function ClientPromiseTimelinePage({ params }: { params: { id: st
     return (
       <AppShell>
         <div className="text-center py-12">
-          <p className="text-gray-500">Client not found.</p>
+          <p className="text-secondary">Client not found.</p>
         </div>
       </AppShell>
     );
@@ -116,97 +116,96 @@ export default function ClientPromiseTimelinePage({ params }: { params: { id: st
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-4xl mx-auto pb-12">
+      <div className="space-y-6 max-w-4xl mx-auto pb-12 page-enter">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">{timeline.contact_name}</h1>
-          <p className="text-gray-500 mt-1">{timeline.contact_email}</p>
+          <h1 className="text-title text-2xl">{timeline.contact_name}</h1>
+          <p className="text-secondary mt-1">{timeline.contact_email}</p>
         </div>
 
         {/* Summary Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <h2 className="text-sm font-medium text-gray-500">Total Promises</h2>
-            <p className="text-3xl font-bold mt-2">{timeline.total_promises}</p>
+        <div className="stat-grid !grid-cols-2 md:!grid-cols-4">
+          <div className="glass-card stat-card">
+            <div className="stat-card__label">Total Promises</div>
+            <div className="stat-card__value">{timeline.total_promises}</div>
           </div>
-          <div className="p-6 bg-white border border-green-200 rounded-lg shadow-sm bg-green-50">
-            <h2 className="text-sm font-medium text-green-700">Kept</h2>
-            <p className="text-3xl font-bold mt-2 text-green-600">{timeline.kept_promises}</p>
+          <div className="glass-card stat-card">
+            <div className="stat-card__label">Kept</div>
+            <div className="stat-card__value text-[var(--brand-secondary)]">{timeline.kept_promises}</div>
           </div>
-          <div className="p-6 bg-white border border-red-200 rounded-lg shadow-sm bg-red-50">
-            <h2 className="text-sm font-medium text-red-700">Broken</h2>
-            <p className="text-3xl font-bold mt-2 text-red-600">{timeline.broken_promises}</p>
+          <div className="glass-card stat-card">
+            <div className="stat-card__label">Broken</div>
+            <div className="stat-card__value text-[var(--brand-danger)]">{timeline.broken_promises}</div>
           </div>
-          <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <h2 className="text-sm font-medium text-gray-500">Reliability</h2>
-            <p className="text-3xl font-bold mt-2">{timeline.reliability_percentage}%</p>
+          <div className="glass-card stat-card">
+            <div className="stat-card__label">Reliability</div>
+            <div className="stat-card__value">{timeline.reliability_percentage}%</div>
           </div>
         </div>
 
         {/* Timeline */}
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-medium">Promise History</h2>
-            <p className="text-sm text-gray-500 mt-1">
+        <div className="glass-card data-card overflow-hidden">
+          <div className="data-card__header border-b border-[var(--border-subtle)] p-6">
+            <h2 className="text-title">Promise History</h2>
+            <p className="text-small text-secondary mt-1">
               Complete record of payment commitments and outcomes.
             </p>
           </div>
-          <div className="p-6">
+          <div className="p-8">
             <div className="relative">
               {/* Timeline line */}
-              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+              <div className="absolute left-8 top-0 bottom-0 w-px bg-[var(--border-subtle)]"></div>
 
               {/* Timeline events */}
               <div className="space-y-8">
                 {timeline.events.map((event, index) => (
                   <div key={event.id} className="relative flex gap-6">
                     {/* Timeline dot */}
-                    <div className={`flex-shrink-0 w-16 h-16 rounded-full border-4 border-white flex items-center justify-center text-2xl z-10 ${
-                      event.status === 'kept' ? 'bg-green-500' :
-                      event.status === 'broken' ? 'bg-red-500' :
-                      'bg-blue-500'
+                    <div className={`flex-shrink-0 w-16 h-16 rounded-full border-4 border-[var(--surface-card)] flex items-center justify-center text-2xl z-10 shadow-sm ${
+                      event.status === 'kept' ? 'bg-[var(--brand-secondary)]' :
+                      event.status === 'broken' ? 'bg-[var(--brand-danger)]' :
+                      'bg-[var(--brand-primary)]'
                     }`}>
-                      <span className="text-white">{getPromiseStatusIcon(event.status)}</span>
+                      <span className="text-white drop-shadow-sm">{getPromiseStatusIcon(event.status)}</span>
                     </div>
 
                     {/* Event card */}
-                    <div className="flex-1 pb-8">
-                      <div className={`border rounded-lg p-4 ${
-                        event.status === 'kept' ? 'border-green-200 bg-green-50' :
-                        event.status === 'broken' ? 'border-red-200 bg-red-50' :
-                        'border-blue-200 bg-blue-50'
+                    <div className="flex-1 pb-4">
+                      <div className={`glass-card p-5 !bg-[var(--surface-bg)] border border-[var(--border-glass)] ${
+                        event.status === 'kept' ? 'border-l-4 border-l-[var(--brand-secondary)]' :
+                        event.status === 'broken' ? 'border-l-4 border-l-[var(--brand-danger)]' :
+                        'border-l-4 border-l-[var(--brand-primary)]'
                       }`}>
-                        <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-start justify-between mb-4">
                           <div>
-                            <h3 className="font-bold text-gray-900">{event.invoice_number}</h3>
-                            <p className="text-sm text-gray-600">{formatCurrency(event.promised_amount_cents)}</p>
+                            <h3 className="text-body font-bold">{event.invoice_number}</h3>
+                            <p className="text-small text-secondary">{formatCurrency(event.promised_amount_cents)}</p>
                           </div>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold border ${getPromiseStatusColor(event.status)}`}>
+                          <Badge status={event.status === 'kept' ? 'paid' : event.status === 'broken' ? 'overdue' : 'pending'}>
                             {event.status.toUpperCase()}
-                          </span>
+                          </Badge>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-small">
                           <div>
-                            <span className="text-gray-600">Promised:</span>
+                            <span className="text-secondary">Promised:</span>
                             <span className="ml-2 font-medium">{formatDate(event.promised_date)}</span>
                           </div>
                           <div>
-                            <span className="text-gray-600">Actual:</span>
+                            <span className="text-secondary">Actual:</span>
                             <span className="ml-2 font-medium">{formatDate(event.actual_payment_date)}</span>
                           </div>
-                          {event.days_late !== null && event.days_late > 0 && (
-                            <div className="col-span-2">
-                              <span className="text-red-600 font-medium">
-                                {event.days_late} days late
-                              </span>
-                            </div>
-                          )}
-                          {event.days_late === 0 && (
-                            <div className="col-span-2">
-                              <span className="text-green-600 font-medium">
-                                Paid on time
-                              </span>
+                          {event.days_late !== null && (
+                            <div className="col-span-full pt-2 border-t border-[var(--border-subtle)]">
+                              {event.days_late > 0 ? (
+                                <span className="text-[var(--brand-danger)] font-medium">
+                                  ⚠️ {event.days_late} days late
+                                </span>
+                              ) : (
+                                <span className="text-[var(--brand-secondary)] font-medium">
+                                  ✅ Paid on time
+                                </span>
+                              )}
                             </div>
                           )}
                         </div>

@@ -39,7 +39,8 @@ const REMINDER_STAGES: ReminderStage[] = [
   { stage: 0, overdueDays: 0, label: 'due_today' },
   { stage: 3, overdueDays: 3, label: 'overdue_3d' },
   { stage: 7, overdueDays: 7, label: 'overdue_7d' },
-  { stage: 14, overdueDays: 14, label: 'overdue_14d' }
+  { stage: 14, overdueDays: 14, label: 'overdue_14d' },
+  { stage: 30, overdueDays: 30, label: 'overdue_30d' }
 ];
 
 export class ReminderSchedulerService {
@@ -87,6 +88,7 @@ export class ReminderSchedulerService {
 
   static getCurrentStage(overdueDays: number): ReminderStage | null {
     if (overdueDays < 0) return null;
+    if (overdueDays >= 30) return REMINDER_STAGES[4];
     if (overdueDays >= 14) return REMINDER_STAGES[3];
     if (overdueDays >= 7) return REMINDER_STAGES[2];
     if (overdueDays >= 3) return REMINDER_STAGES[1];

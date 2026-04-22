@@ -1,6 +1,8 @@
 import './globals.css'
-import './typography.css'
-import './animations.css'
+import '../components/layout/Navbar.css'
+import '../components/layout/Dashboard.css'
+import '../components/sections/Hero.css'
+import '../components/sections/Sections.css'
 import { ToastProvider } from '../components/ui/Toast'
 
 export const metadata = {

@@ -1,65 +1,48 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'dark';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   children: React.ReactNode;
 }
 
 export function Button({
   variant = 'primary',
+  size = 'md',
   loading = false,
   children,
   className = '',
   disabled,
   ...props
 }: ButtonProps) {
-  const baseStyles = `
-    inline-flex items-center justify-center gap-2
-    px-4 py-2.5 rounded-lg
-    font-medium text-sm
-    transition-all duration-200
-    disabled:opacity-40 disabled:cursor-not-allowed
-    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-base)]
-  `;
-
-  const variantStyles = {
-    primary: `
-      bg-[var(--accent)] text-[#0A0B0D]
-      hover:bg-[var(--accent-dim)]
-      focus:ring-[var(--accent)]
-      shadow-[var(--shadow-accent)]
-      font-semibold
-    `,
-    secondary: `
-      bg-[var(--bg-elevated)] text-[var(--text-primary)]
-      border border-[var(--border-default)]
-      hover:bg-[var(--bg-highlight)] hover:border-[var(--border-strong)]
-      focus:ring-[var(--accent)]
-    `,
-    ghost: `
-      bg-transparent text-[var(--text-secondary)]
-      hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]
-      focus:ring-[var(--accent)]
-    `,
-    danger: `
-      bg-[var(--danger)] text-white
-      hover:bg-[#DC2626]
-      focus:ring-[var(--danger)]
-    `,
+  const variantClasses = {
+    primary: 'btn-primary',
+    secondary: 'btn-secondary',
+    ghost: 'btn-ghost',
+    danger: 'badge-red', // Fallback if btn-danger not in global
+    dark: 'btn-dark',
   };
+
+  const sizeClasses = {
+    sm: 'btn-sm',
+    md: '',
+    lg: 'btn-lg',
+  };
+
+  const finalVariantClass = variant === 'danger' ? 'btn-primary bg-[var(--brand-danger)] shadow-none hover:bg-[#E03E33]' : variantClasses[variant];
 
   return (
     <button
-      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+      className={`btn ${finalVariantClass} ${sizeClasses[size]} ${className}`}
       disabled={disabled || loading}
       {...props}
     >
       {loading && (
         <svg
-          className="spin w-4 h-4"
+          className="spin w-4 h-4 mr-2"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"

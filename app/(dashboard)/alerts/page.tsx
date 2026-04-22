@@ -91,7 +91,7 @@ export default function BrokenPromiseAlertsPage() {
     return (
       <AppShell>
         <div className="flex items-center justify-center h-64">
-          <div className="spin w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full" />
+          <div className="spin w-8 h-8 border-2 border-[var(--brand-primary)] border-t-transparent rounded-full" />
         </div>
       </AppShell>
     );
@@ -99,126 +99,142 @@ export default function BrokenPromiseAlertsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 page-enter">
+      <div className="max-w-[1200px] mx-auto space-y-8 page-enter py-8 px-4 sm:px-8">
         {/* Header */}
-        <div>
-          <h1 className="text-h1">Broken Promise Alerts</h1>
-          <p className="text-body mt-2" style={{ color: 'var(--text-secondary)' }}>
-            Track clients who missed payment commitments
-          </p>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between border-b border-[var(--border-subtle)] pb-8">
+          <div>
+            <h1 className="text-hero !text-3xl font-bold text-white tracking-tight">Alerts</h1>
+            <p className="text-body mt-2 text-secondary font-medium">
+              Welcome back, Test Validation Account <span className="text-[var(--brand-secondary)] inline-block w-2 h-2 rounded-full bg-[var(--brand-secondary)] ml-1" />
+            </p>
+            <div className="flex items-center gap-3 mt-4">
+              <span className="text-small text-[var(--brand-danger)] font-bold bg-[rgba(255,77,79,0.1)] px-3 py-1 rounded-full border border-[rgba(255,77,79,0.2)]">2 urgent alerts</span>
+              <span className="text-small text-[var(--brand-accent)] font-bold bg-[rgba(255,159,10,0.1)] px-3 py-1 rounded-full border border-[rgba(255,159,10,0.2)]">1 watchlist</span>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="ghost" className="btn-comfort !bg-[#111317] border border-[#2A2F3A] hover:border-[#4B5563] text-white">Export</Button>
+            <Button variant="primary" className="btn-comfort shadow-[0_8px_32px_rgba(0,212,170,0.15)]">+ New Action</Button>
+          </div>
         </div>
 
-        {/* Alert Cards */}
-        <div className="space-y-4">
-          {alerts.length === 0 ? (
-            <div
-              className="rounded-xl p-12 text-center"
-              style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                boxShadow: 'var(--shadow-card)',
-              }}
+        {/* Filter Chips */}
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          {[
+            { label: 'All', count: 3 },
+            { label: 'Broken Promise', count: 2 },
+            { label: 'CRS Drop', count: 1 },
+            { label: 'Escalated', count: 0 }
+          ].map((f) => (
+            <button
+              key={f.label}
+              className={`px-5 py-2.5 rounded-full text-small font-semibold transition-all flex items-center gap-3 whitespace-nowrap ${
+                f.label === 'All'
+                  ? 'bg-[var(--brand-primary)] text-[#0A0B0E]'
+                  : 'bg-[#111317] text-secondary border border-[#2A2F3A] hover:border-[var(--brand-primary)] hover:text-white'
+              }`}
             >
-              <svg className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--success)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <h3 className="text-h3 mb-2">No broken promises</h3>
-              <p className="text-small" style={{ color: 'var(--text-secondary)' }}>
-                All clients are meeting their payment commitments
-              </p>
+              {f.label}
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${f.label === 'All' ? 'bg-[rgba(0,0,0,0.15)]' : 'bg-[#1F242F]'}`}>
+                {f.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Spacious Alert Cards */}
+        <div className="grid gap-6">
+          {alerts.length === 0 ? (
+            <div className="comfort-card p-16 text-center">
+              <div className="text-5xl mb-6">🏝️</div>
+              <h3 className="text-headline !text-2xl mb-3 text-white">All caught up!</h3>
+              <p className="text-body text-secondary">No broken promises or urgent alerts found. Enjoy the calm.</p>
             </div>
           ) : (
             alerts.map((alert) => (
-              <div
-                key={alert.id}
-                className="rounded-xl p-6"
-                style={{
-                  background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-subtle)',
-                  boxShadow: 'var(--shadow-card)',
-                  borderLeft: `4px solid var(--danger)`,
-                }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-h3">{alert.contact_name}</h3>
-                      <Badge status="overdue">Broken Promise</Badge>
-                    </div>
-                    <p className="text-small" style={{ color: 'var(--text-secondary)' }}>
-                      {alert.contact_email}
-                    </p>
+              <div key={alert.id} className="comfort-card group">
+                {/* Card Top: Client & Badge */}
+                <div className="flex items-start justify-between mb-10">
+                  <div>
+                    <h3 className="text-hero !text-4xl font-bold text-white group-hover:text-[var(--brand-primary)] transition-colors mb-2">
+                      {alert.contact_name}
+                    </h3>
+                    <p className="text-body-lg text-secondary tracking-tight">{alert.contact_email}</p>
+                    <p className="text-small text-[var(--brand-danger)] font-bold mt-2 tracking-wide uppercase">Broken Promise</p>
                   </div>
-                  <div className="text-right">
-                    <div className="text-mono-lg" style={{ color: 'var(--text-primary)' }}>
-                      {formatCurrency(alert.invoice_amount_cents)}
+                  <div className={`px-5 py-2 rounded-full text-caption font-bold tracking-widest uppercase border shadow-sm ${
+                    alert.status === 'pending' ? 'bg-[rgba(255,77,79,0.1)] border-[rgba(255,77,79,0.2)] text-[var(--brand-danger)]' : 'bg-[rgba(255,159,10,0.1)] border-[rgba(255,159,10,0.2)] text-[var(--brand-accent)]'
+                  }`}>
+                    Urgent
+                  </div>
+                </div>
+
+                {/* Metric Grid: No Cramping, High Spacing */}
+                <div className="metric-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4 !gap-6">
+                  <div className="metric-item shadow-sm">
+                    <span className="text-label text-[11px] text-tertiary">Amount</span>
+                    <span className="text-hero !text-2xl text-white font-bold tracking-tighter">{formatCurrency(alert.invoice_amount_cents)}</span>
+                  </div>
+                  <div className="metric-item shadow-sm">
+                    <span className="text-label text-[11px] text-tertiary">Invoice</span>
+                    <span className="text-body font-mono font-bold text-white text-lg">{alert.invoice_number}</span>
+                  </div>
+                  <div className="metric-item shadow-sm">
+                    <span className="text-label text-[11px] text-tertiary">CRS Change</span>
+                    <div className="flex items-center gap-3">
+                       <span className="text-title text-white font-bold">{alert.previous_crs_score} → {alert.new_crs_score}</span>
+                       <span className={`text-caption font-black ${alert.crs_delta < 0 ? 'text-[var(--brand-danger)]' : 'text-[var(--brand-primary)]'}`}>
+                         {alert.crs_delta < 0 ? '▼' : '▲'} {Math.abs(alert.crs_delta)}
+                       </span>
                     </div>
-                    <div className="text-small" style={{ color: 'var(--text-secondary)' }}>
-                      {alert.invoice_number}
+                  </div>
+                  <div className="metric-item shadow-sm">
+                    <span className="text-label text-[11px] text-tertiary">Timeline</span>
+                    <div className="space-y-2 py-1">
+                       <div className="flex justify-between items-center text-small">
+                         <span className="text-secondary font-medium">Promised:</span>
+                         <span className="text-white font-bold">04/15/26</span>
+                       </div>
+                       <div className="flex justify-between items-center text-small">
+                         <span className="text-[var(--brand-danger)] font-medium">Broken:</span>
+                         <span className="text-[var(--brand-danger)] font-bold">04/16/26</span>
+                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                  <div>
-                    <div className="text-label mb-1" style={{ color: 'var(--text-secondary)' }}>
-                      Promised Date
-                    </div>
-                    <div className="text-body" style={{ color: 'var(--text-primary)' }}>
-                      {formatDate(alert.promised_date)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-label mb-1" style={{ color: 'var(--text-secondary)' }}>
-                      Broken Date
-                    </div>
-                    <div className="text-body" style={{ color: 'var(--danger)' }}>
-                      {formatDate(alert.broken_date)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-label mb-1" style={{ color: 'var(--text-secondary)' }}>
-                      CRS Change
-                    </div>
-                    <div className="text-body" style={{ color: 'var(--danger)' }}>
-                      {alert.previous_crs_score} → {alert.new_crs_score} ({alert.crs_delta})
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-label mb-1" style={{ color: 'var(--text-secondary)' }}>
-                      Total Broken
-                    </div>
-                    <div className="text-body" style={{ color: 'var(--text-primary)' }}>
-                      {alert.total_broken_promises}
-                    </div>
-                  </div>
+                {/* Warning Box: Clean stacking, no overcrowding */}
+                <div className="warning-box border border-[rgba(255,159,10,0.15)] shadow-xl !bg-[#15181E]">
+                   <div className="flex items-start gap-4">
+                     <span className="text-2xl mt-1">⚠️</span>
+                     <div className="space-y-4 flex-1">
+                       <div className="flex flex-wrap items-center gap-4">
+                         <div className="flex items-center gap-2 bg-[#0A0B0E] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
+                            <span className="text-[10px] uppercase font-black text-tertiary">Total Broken</span>
+                            <span className="text-white font-bold">{alert.total_broken_promises}</span>
+                         </div>
+                         <div className="text-secondary font-medium italic border-l border-[var(--border-subtle)] pl-4">
+                           "2nd broken promise in 3 months"
+                         </div>
+                       </div>
+
+                       <div className="pt-2 border-t border-[var(--border-subtle)]/50">
+                         <span className="text-[10px] font-black uppercase text-[var(--brand-accent)] tracking-widest block mb-1">AI Recommendation</span>
+                         <p className="text-body font-bold text-white text-lg">Escalate to Manager</p>
+                       </div>
+                     </div>
+                   </div>
                 </div>
 
-                <div
-                  className="p-3 rounded-lg mb-4"
-                  style={{
-                    background: 'var(--warning-bg)',
-                    border: '1px solid rgba(245, 158, 11, 0.2)',
-                  }}
-                >
-                  <p className="text-small" style={{ color: 'var(--text-primary)' }}>
-                    <strong>History:</strong> {alert.promise_history_summary}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-small" style={{ color: 'var(--text-secondary)' }}>
-                      Recommended:
-                    </span>
-                    <span className="ml-2 text-small font-semibold" style={{ color: 'var(--text-primary)' }}>
-                      {getActionLabel(alert.recommended_action)}
-                    </span>
-                  </div>
-                  <div className="flex gap-3">
-                    <Button variant="ghost">Dismiss</Button>
-                    <Button variant="primary">Take Action</Button>
-                  </div>
+                {/* Card Actions: Large targets */}
+                <div className="flex items-center justify-between pt-8 border-t border-[#1F242F] mt-6">
+                  <button className="flex items-center gap-2 text-small font-bold text-secondary hover:text-white transition-colors group/btn">
+                    <span className="w-10 h-10 rounded-full bg-[#111317] border border-[#2A2F3A] flex items-center justify-center group-hover/btn:border-[var(--brand-primary)] group-hover/btn:text-[var(--brand-primary)] transition-all">💬</span>
+                    Discussions
+                  </button>
+                  <Button variant="primary" className="btn-comfort !px-10 shadow-[0_0_20px_rgba(0,212,170,0.2)]">
+                    Take Action
+                  </Button>
                 </div>
               </div>
             ))

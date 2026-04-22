@@ -110,8 +110,8 @@ export const InvoiceImportSchema = z.object({
   contact_email: z.string().email().optional().or(z.literal('')),
   amount: z.number().positive(),
   currency: z.string().length(3).default('USD'),
-  due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  issued_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.string().regex(/^\d{1,2}\/\d{1,2}\/\d{2,4}$/)),
+  issued_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.string().regex(/^\d{1,2}\/\d{1,2}\/\d{2,4}$/)).optional().default(() => new Date().toISOString().split('T')[0]),
 });
 
 export type InvoiceImport = z.infer<typeof InvoiceImportSchema>;

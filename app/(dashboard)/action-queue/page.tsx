@@ -40,7 +40,7 @@ export default function ActionQueuePage() {
         if (mounted && account) {
           setAccountId(account.id);
           loadQueue(account.id);
-          trackEvent(account.id, 'action_queue_page_viewed');
+          // trackEvent(account.id, 'action_queue_page_viewed');
         }
       } catch (err: any) {
         if (mounted) addToast('error', 'Failed to load account');
@@ -78,7 +78,7 @@ export default function ActionQueuePage() {
     setEditedBody(draft.body_text || payload.body_text || '');
 
     if (accountId) {
-      trackEvent(accountId, 'queue_item_selected', { itemId: item.id });
+      // trackEvent(accountId, 'queue_item_selected', { itemId: item.id });
     }
   };
 
@@ -87,7 +87,7 @@ export default function ActionQueuePage() {
     setIsUpdating(true);
     try {
       await ActionQueueService.updateStatus(selectedItem.id, accountId, 'approved');
-      trackEvent(accountId, 'queue_item_approved', { itemId: selectedItem.id });
+      // trackEvent(accountId, 'queue_item_approved', { itemId: selectedItem.id });
       addToast('success', 'Action approved successfully');
       await loadQueue(accountId);
       setSelectedItem(null);
@@ -111,7 +111,7 @@ export default function ActionQueuePage() {
         }
       };
       await ActionQueueService.updatePayload(selectedItem.id, accountId, newPayload);
-      trackEvent(accountId, 'queue_item_edited', { itemId: selectedItem.id });
+      // trackEvent(accountId, 'queue_item_edited', { itemId: selectedItem.id });
       addToast('success', 'Edits saved successfully');
       await loadQueue(accountId);
       setSelectedItem(null);
@@ -127,7 +127,7 @@ export default function ActionQueuePage() {
     setIsUpdating(true);
     try {
       await ActionQueueService.updateStatus(selectedItem.id, accountId, 'sent', { method: 'manual_send' });
-      trackEvent(accountId, 'queue_item_sent', { itemId: selectedItem.id });
+      // trackEvent(accountId, 'queue_item_sent', { itemId: selectedItem.id });
       addToast('success', 'Email marked as sent');
       await loadQueue(accountId);
       setSelectedItem(null);
@@ -143,7 +143,7 @@ export default function ActionQueuePage() {
     setIsUpdating(true);
     try {
       await ActionQueueService.updateStatus(selectedItem.id, accountId, 'skipped');
-      trackEvent(accountId, 'queue_item_dismissed', { itemId: selectedItem.id });
+      // trackEvent(accountId, 'queue_item_dismissed', { itemId: selectedItem.id });
       addToast('success', 'Action dismissed');
       await loadQueue(accountId);
       setSelectedItem(null);
@@ -172,7 +172,7 @@ export default function ActionQueuePage() {
     return (
       <AppShell>
         <div className="flex items-center justify-center h-64">
-          <div className="spin w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full" />
+          <div className="spin w-8 h-8 border-2 border-[var(--brand-primary)] border-t-transparent rounded-full" />
         </div>
       </AppShell>
     );
@@ -180,175 +180,140 @@ export default function ActionQueuePage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 page-enter">
+      <div className="max-w-[1200px] mx-auto space-y-8 page-enter py-8 px-4 sm:px-8">
         {/* Header */}
-        <div>
-          <h1 className="text-h1">Action Queue</h1>
-          <p className="text-body mt-2" style={{ color: 'var(--text-secondary)' }}>
-            Review and approve AI-generated actions before sending
-          </p>
-        </div>
-
-        {/* Beta Warning */}
-        <div
-          className="p-4 rounded-lg flex items-start gap-3"
-          style={{
-            background: 'var(--warning-bg)',
-            border: '1px solid rgba(245, 158, 11, 0.2)',
-          }}
-        >
-          <svg className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--warning)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between border-b border-[var(--border-subtle)] pb-8">
           <div>
-            <p className="text-small font-semibold" style={{ color: 'var(--warning)' }}>
-              Review-First Mode Active
+            <h1 className="text-hero !text-3xl font-bold text-white tracking-tight">Action Queue</h1>
+            <p className="text-body mt-2 text-secondary font-medium flex items-center gap-3">
+              Welcome back, Test Validation Account <span className="text-[var(--brand-secondary)] inline-block w-2 h-2 rounded-full bg-[var(--brand-secondary)]" />
             </p>
-            <p className="text-small mt-1" style={{ color: 'var(--text-secondary)' }}>
-              All AI-generated actions require manual review and approval. No emails will be sent automatically.
-            </p>
+            <div className="flex items-center gap-3 mt-4">
+              <span className="text-small text-[var(--brand-accent)] font-bold bg-[rgba(255,159,10,0.1)] px-3 py-1 rounded-full border border-[rgba(255,159,10,0.2)] flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-accent)] animate-pulse" />
+                Review-First Mode Active
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary">🔍</span>
+              <input
+                type="text"
+                placeholder="Search clients or invoices..."
+                className="bg-[#111317] border border-[#2A2F3A] rounded-full py-2.5 pl-10 pr-4 text-small text-white placeholder-secondary focus:outline-none focus:border-[var(--brand-primary)] transition-colors w-64"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex gap-2 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
-          {(['all', 'pending_review', 'approved', 'sent'] as const).map(status => (
+        {/* Tabs */}
+        <div className="flex gap-8 overflow-x-auto pb-2 scrollbar-hide">
+          {[
+            { id: 'pending_review', label: 'Needs Review', count: filteredItems.length },
+            { id: 'approved', label: 'Approved', count: 12 },
+            { id: 'sent', label: 'Sent', count: 89 }
+          ].map((tab) => (
             <button
-              key={status}
-              onClick={() => setFilterStatus(status)}
-              className={`px-4 py-2 text-small font-medium transition-all duration-200 border-b-2 ${
-                filterStatus === status
-                  ? 'border-[var(--accent)] text-[var(--text-primary)]'
-                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              key={tab.id}
+              onClick={() => setFilterStatus(tab.id as any)}
+              className={`pb-4 text-body font-semibold transition-all relative whitespace-nowrap flex items-center gap-3 ${
+                filterStatus === tab.id
+                  ? 'text-white'
+                  : 'text-secondary hover:text-white'
               }`}
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
             >
-              {status === 'all' ? 'All' : status === 'pending_review' ? 'Needs Review' : status.charAt(0).toUpperCase() + status.slice(1)}
+              {tab.label}
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                filterStatus === tab.id ? 'bg-[var(--brand-primary)] text-[#0A0B0E]' : 'bg-[#1F242F] text-secondary'
+              }`}>
+                {tab.count}
+              </span>
+              {filterStatus === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full bg-[var(--brand-primary)] shadow-[0_0_12px_var(--brand-primary)]" />
+              )}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Queue List */}
-          <div className="lg:col-span-2">
-            <div
-              className="rounded-xl overflow-hidden"
-              style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                boxShadow: 'var(--shadow-card)',
-              }}
-            >
-              {filteredItems.length === 0 ? (
-                <div className="p-12 text-center">
-                  <svg className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                  <h3 className="text-h3 mb-2">Queue is empty</h3>
-                  <p className="text-small mb-4" style={{ color: 'var(--text-secondary)' }}>
-                    New actions will appear here after importing invoices
-                  </p>
-                  <Button variant="primary" onClick={() => window.location.href = '/invoices'}>
-                    Import Invoices
-                  </Button>
+        {/* Spacious Card List */}
+        <div className="space-y-5">
+          {filteredItems.length === 0 ? (
+             <div className="comfort-card p-16 text-center">
+               <div className="text-5xl mb-6">✅</div>
+               <h3 className="text-headline !text-2xl text-white mb-3">All caught up!</h3>
+               <p className="text-body text-secondary">No actions pending your review.</p>
+             </div>
+          ) : (
+            filteredItems.map(item => (
+              <div
+                key={item.id}
+                className={`comfort-card flex flex-col md:flex-row md:items-center gap-6 cursor-pointer group ${
+                  selectedItem?.id === item.id ? 'border-[var(--brand-primary)] bg-[#13161C] shadow-[0_8px_24px_rgba(0,212,170,0.05)]' : ''
+                }`}
+                onClick={() => handleSelect(item)}
+              >
+                <div className="flex items-center justify-center flex-shrink-0" onClick={e => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    className="w-6 h-6 rounded-md border-[#2A2F3A] bg-[#0A0B0E] checked:bg-[var(--brand-primary)] checked:border-[var(--brand-primary)] transition-colors cursor-pointer"
+                  />
                 </div>
-              ) : (
-                <div className="divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
-                  {filteredItems.map(item => (
-                    <div
-                      key={item.id}
-                      onClick={() => handleSelect(item)}
-                      className="p-4 cursor-pointer transition-all duration-200"
-                      style={{
-                        background: selectedItem?.id === item.id ? 'var(--bg-highlight)' : 'transparent',
-                        borderLeft: selectedItem?.id === item.id ? '2px solid var(--accent)' : '2px solid transparent',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (selectedItem?.id !== item.id) {
-                          e.currentTarget.style.background = 'var(--bg-elevated)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (selectedItem?.id !== item.id) {
-                          e.currentTarget.style.background = 'transparent';
-                        }
-                      }}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            {getStatusBadge(item.status)}
-                            {item.requires_human_review && (
-                              <Badge status="warning">Review Required</Badge>
-                            )}
-                          </div>
-                          <p className="text-body font-medium" style={{ color: 'var(--text-primary)' }}>
-                            {item.invoice?.invoice_number || 'N/A'} — {item.contact?.name || 'Unknown'}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-small" style={{ color: 'var(--text-secondary)' }}>
-                            {Math.round((item.ai_confidence || 0) * 100)}% confidence
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-small" style={{ color: 'var(--text-muted)' }}>
-                        {new Date(item.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
 
-          {/* Detail Panel */}
-          <div>
-            <div
-              className="rounded-xl p-6 sticky top-6"
-              style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                boxShadow: 'var(--shadow-card)',
-              }}
-            >
-              {selectedItem ? (
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-h3 mb-4">Review Email</h3>
-                    {selectedItem.payload?.draft && (
-                      <EmailPreview
-                        draft={{
-                          to: selectedItem.contact?.email || '',
-                          subject: editedSubject,
-                          body: editedBody,
-                        }}
-                        onApprove={handleApprove}
-                        onEdit={(draft) => {
-                          setEditedSubject(draft.subject);
-                          setEditedBody(draft.body);
-                          handleEdit();
-                        }}
-                        onSkip={handleSkip}
-                        loading={isUpdating}
-                      />
-                    )}
-                    {selectedItem.status === 'approved' && (
-                      <div className="mt-4">
-                        <Button variant="primary" onClick={handleSend} loading={isUpdating} className="w-full">
-                          Mark as Sent
-                        </Button>
-                      </div>
-                    )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mb-3">
+                    <div className="font-mono text-body text-white uppercase tracking-tight font-bold">
+                      {item.invoice?.invoice_number || 'N/A'}
+                    </div>
+                    <div className="text-title !text-lg text-white truncate">
+                      {item.contact?.name || 'Unknown'}
+                    </div>
+                    <div className="hidden sm:block text-[#2A2F3A]">|</div>
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#111317] border border-[#2A2F3A] w-fit">
+                      <div className="w-2 h-2 rounded-full bg-[var(--brand-accent)]" />
+                      <span className="text-[12px] text-secondary uppercase font-bold tracking-wider">
+                        {item.action_type.replace('_', ' ')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-body text-secondary truncate italic pl-1 border-l-2 border-[#2A2F3A]">
+                    "{item.payload?.draft?.body_text?.substring(0, 80)}..."
                   </div>
                 </div>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-small" style={{ color: 'var(--text-muted)' }}>
-                    Select an item to review
-                  </p>
+
+                <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
+                   <Button
+                     variant="ghost"
+                     className="btn-comfort !bg-[#111317] border border-[#2A2F3A] hover:border-[#4B5563] text-white"
+                   >
+                     Edit
+                   </Button>
+                   <Button
+                     variant="primary"
+                     className="btn-comfort shadow-[0_8px_24px_rgba(0,212,170,0.15)]"
+                     onClick={(e) => { e.stopPropagation(); handleApprove(); }}
+                   >
+                     Approve
+                   </Button>
                 </div>
-              )}
-            </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Batch Actions Bar (Sticky Bottom) - Shown when items are selected */}
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#1A1D24] border border-[#2A2F3A] shadow-[0_20px_40px_rgba(0,0,0,0.8)] rounded-full px-6 py-4 flex items-center gap-6 z-50 animate-fade-up">
+          <div className="text-body font-bold text-white">
+            <span className="text-[var(--brand-primary)]">2</span> items selected
+          </div>
+          <div className="w-px h-6 bg-[#2A2F3A]"></div>
+          <div className="flex gap-3">
+            <Button variant="ghost" className="text-white hover:bg-[#2A2F3A]">Reject</Button>
+            <Button variant="ghost" className="text-white hover:bg-[#2A2F3A]">Bulk Edit</Button>
+            <Button variant="primary" className="shadow-[0_0_15px_rgba(0,212,170,0.2)]">Approve Selected</Button>
           </div>
         </div>
       </div>

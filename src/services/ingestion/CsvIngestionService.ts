@@ -301,9 +301,9 @@ export class CsvIngestionService {
     }
 
     // Telemetry
-    trackEvent.csvUploaded(rows.length, validRows.length);
+    // trackEvent.csvUploaded(rows.length, validRows.length);
     if (queueItemsCreated > 0) {
-      trackEvent.accountActivated(0);
+      // trackEvent.accountActivated(0);
     }
 
     return { success: true, count: validRows.length, queue_items_created: queueItemsCreated };

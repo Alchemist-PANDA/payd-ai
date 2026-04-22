@@ -67,6 +67,10 @@ export function UploadZone({ onFileSelect, accept = '.csv', maxSizeMB = 10 }: Up
     if (files && files.length > 0) {
       handleFile(files[0]);
     }
+    // Clear the input value so the same file can be selected again if needed
+    if (e.target) {
+      e.target.value = '';
+    }
   };
 
   const handleBrowseClick = () => {
@@ -89,13 +93,18 @@ export function UploadZone({ onFileSelect, accept = '.csv', maxSizeMB = 10 }: Up
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={handleBrowseClick}
+        onClick={(e) => {
+          // Prevent double trigger if event bubbles or is handled by label/input
+          if (e.target instanceof HTMLInputElement) return;
+          handleBrowseClick();
+        }}
       >
         <input
           ref={fileInputRef}
           type="file"
           accept={accept}
           onChange={handleFileInput}
+          onClick={(e) => e.stopPropagation()} // Stop propagation to prevent double-click behavior
           className="hidden"
         />
 

@@ -58,13 +58,21 @@ export class MockAiProvider implements AiProvider {
     console.log(`[AI Mock] Extracting promise... Ref Date: ${referenceDate}`);
     const lowerBody = emailBody.toLowerCase();
 
-    if (lowerBody.includes('will pay on') || lowerBody.includes('next friday')) {
+    // Regex for date extraction (e.g., "by 20th", "next Friday", "May 1st")
+    // Simplified regex for the mock - in reality this would be more complex
+    const dateMatch = emailBody.match(/(?:by|on|before)\s+(\d{1,2}(?:st|nd|rd|th)?|next\s+\w+|[A-Z][a-z]+\s+\d{1,2})/i);
+    const amountMatch = emailBody.match(/\$?\d+(?:,\d{3})*(?:\.\d{2})?/);
+
+    if (lowerBody.includes('will pay') || lowerBody.includes('promise') || lowerBody.includes('commitment')) {
+      const extractedDate = dateMatch ? `2026-05-${dateMatch[1].replace(/\D/g, '').padStart(2, '0')}` : '2026-05-15';
+      const extractedAmount = amountMatch ? parseFloat(amountMatch[0].replace(/[^0-9.]/g, '')) * 100 : 50000;
+
       return {
-        promised_date: '2026-04-24', // Static mock date
-        amount_cents: 50000, // Static mock amount
+        promised_date: extractedDate,
+        amount_cents: extractedAmount,
         confidence: 0.9,
-        rationale: 'Extracted explicit date and amount from text.',
-        requires_human_review: true, // Phase 4 Blocked: Review-first policy enforced
+        rationale: `Detected payment intent with date context: ${dateMatch?.[0] || 'unknown'}`,
+        requires_human_review: true,
       };
     }
 

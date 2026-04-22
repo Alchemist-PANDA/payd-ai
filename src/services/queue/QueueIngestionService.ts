@@ -26,6 +26,35 @@ export class QueueIngestionService {
   ) {
     const classification = await ReplyClassifierService.classify(emailBody);
 
+    // Phase 3 Enhancement: Extract promises from text
+    let promiseExtraction = null;
+    if (classification.category === 'explicit_promise' || classification.category === 'weak_payment_signal') {
+      try {
+        const { aiProvider } = await import('../../lib/ai/index');
+        const referenceDate = new Date().toISOString().split('T')[0];
+        promiseExtraction = await aiProvider.extractPromise(emailBody, referenceDate);
+      } catch (err) {
+        console.error('[QueueIngestion] Promise extraction failed:', err);
+      }
+    }
+
+    // Phase 3: Shadow Mode Enforcement
+    // Check if account is in the "Shadow Mode" onboarding period
+    const { data: account } = await supabase
+      .from('accounts')
+      .select('created_at')
+      .eq('id', accountId)
+      .single();
+
+    const { count: sendCount } = await supabase
+      .from('action_queue')
+      .select('id', { count: 'exact', head: true })
+      .eq('account_id', accountId)
+      .eq('status', 'sent');
+
+    const accountAgeDays = account ? Math.floor((Date.now() - new Date(account.created_at).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+    const isShadowMode = accountAgeDays < 14 || (sendCount || 0) < 20;
+
     // Insert into action_queue for human review
     const { data, error } = await supabase
       .from('action_queue')
@@ -37,11 +66,13 @@ export class QueueIngestionService {
         priority: classification.category === 'dispute' ? 10 : 5,
         payload: {
           classification,
+          promise_extraction: promiseExtraction,
           email_body: emailBody,
-          email_metadata: emailMetadata
+          email_metadata: emailMetadata,
+          shadow_mode: isShadowMode
         },
         ai_confidence: classification.confidence,
-        requires_human_review: classification.requires_human_review
+        requires_human_review: isShadowMode || classification.requires_human_review || (promiseExtraction?.requires_human_review ?? false)
       })
       .select()
       .single();
@@ -60,7 +91,11 @@ export class QueueIngestionService {
       'queue_item.created',
       'action_queue',
       data.id,
-      { action_type: 'classify_reply', category: classification.category }
+      {
+        action_type: 'classify_reply',
+        category: classification.category,
+        has_promise: !!promiseExtraction
+      }
     );
 
     return data;
@@ -100,17 +135,20 @@ export class QueueIngestionService {
     }
 
     // Phase 3: Multi-contact auto-CC logic
-    // Stage 4+ (14 days overdue) should CC escalation contacts
+    // Stage 14+ (14 days overdue) should CC escalation contacts
+    // Stage 30+ (30 days overdue) should CC both finance and escalation contacts
     let ccContacts: Contact[] = [];
     if (stage !== undefined && stage >= 14) {
-      const { data: escalationLinks } = await supabase
+      const types = stage >= 30 ? ['escalation', 'finance'] : ['escalation'];
+
+      const { data: contactLinks } = await supabase
         .from('invoice_contact_links')
         .select('contact:contacts(id, account_id, name, email, phone)')
         .eq('invoice_id', invoice.id)
-        .eq('contact_type', 'escalation');
+        .in('contact_type', types);
 
-      if (escalationLinks && escalationLinks.length > 0) {
-        ccContacts = escalationLinks
+      if (contactLinks && contactLinks.length > 0) {
+        ccContacts = contactLinks
           .map((link: any) => link.contact)
           .filter((c: any) => c && c.email);
       }
