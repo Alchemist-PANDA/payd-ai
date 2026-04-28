@@ -13,10 +13,11 @@ pinned: false
 
 **Automating brand discovery and citation lift in Generative Search Engines (ChatGPT, Perplexity, Gemini).**
 
-![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-blue)
-![Streamlit](https://img.shields.io/badge/UI-Streamlit-red)
-![Python](https://img.shields.io/badge/Language-Python-3776AB)
-![Multi-LLM](https://img.shields.io/badge/LLM-OpenAI%20%7C%20Gemini%20%7C%20Groq-orange)
+![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_Orchestration-orange)
+![Multi-LLM](https://img.shields.io/badge/Multi--LLM-OpenAI_|_Groq_|_Gemini-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ```text
                                 [ BrandSight GEO Architecture ]
@@ -40,191 +41,91 @@ pinned: false
 
 ## 📌 What It Does
 
-```
-Brand Input  →  Multi-LLM Audit  →  Gap Analysis  →  Auto-Remediation  →  Lift Report
-```
-
-Given a brand name like **"Burger Hub"**, the agent:
-1. Queries multiple AI search engines (ChatGPT, Gemini, Llama) to check citation presence
-2. Identifies gaps (missing structured data, low authority signals)
-3. Auto-generates schema.org JSON-LD, technical whitepapers, and review snippets
-4. Outputs a deployment package ready for WordPress
-5. Measures the "Citation Lift" after deployment
-
----
-
-## 🔴 The Problem: The "AI Invisibility Crisis"
-
-In the era of AI-first search, your brand is either a citation or it doesn't exist.
-- **The Blind Spot**: 90% of brands are absent from ChatGPT, Perplexity, and Gemini recommendations because they lack the "authority signals" LLMs require.
-- **SEO Failure**: Traditional SEO (backlinks and keywords) does not influence LLM retrieval-augmented generation (RAG) pipelines.
-- **The Stakeholders**: This tool is built for **Brand Managers**, **Founders**, and **Growth Teams** who need to audit and improve their "Generative Engine Visibility."
-
----
-
-## 🗂️ Project Structure
+In the era of AI-first search, your brand is either a citation or it doesn't exist. Traditional SEO does not work for LLM-based search. **BrandSight GEO** automates the entire audit → remediation → measurement cycle.
 
 ```
-GEO/
-├── geo_audit_agent/
-│   ├── agent.py              ← LangGraph state machine (6 nodes)
-│   ├── geo_remediation_tools.py  ← JSON-LD, whitepaper, review generators
-│   └── __init__.py
-├── geo_upload/
-│   ├── dashboard.py          ← Streamlit UI with auth
-│   ├── run_baseline.py       ← Pre-remediation audit
-│   ├── deploy_remediation.py ← Deployment package generator
-│   ├── measure_lift.py       ← Post-audit lift calculator
-│   └── *.json                ← Audit results (pre/post)
-└── requirements.txt
+Brand Input → Multi-LLM Audit → Gap Analysis → Auto-Remediation → Lift Report
 ```
 
 ---
 
-## ⚙️ Setup (Step by Step)
+## 🚀 Getting Started
 
-### 1. Clone the repository
+Follow these steps to set up and run the GEO Audit Agent on your local machine.
+
+### 📋 Prerequisites
+- **Python 3.10+**
+- **pip** (Python package manager)
+- **Git**
+
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/Alchemist-PANDA/GEO
-cd GEO
+git clone https://github.com/Alchemist-PANDA/GEO-.git
+cd GEO-
 ```
 
-### 2. Install dependencies
+### 2. Installation
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Set up environment variables
-Create a `.env` file:
+### 3. API Keys
+Create a `.env` file from the example:
 ```bash
-ANTHROPIC_BASE_URL=http://localhost:20128/v1
-ANTHROPIC_AUTH_TOKEN=your_api_key_here
+cp .env.example .env
 ```
+Fill in your API keys in the `.env` file. You can use **Groq** for free high-speed inference or **OpenAI/Gemini**.
 
-### 4. Run the dashboard
+### 4. Running the Dashboard
 ```bash
 streamlit run geo_upload/dashboard.py
 ```
 
 ### 5. Login
+Access the dashboard and use these default credentials:
 - **Username**: `admin`
 - **Password**: `geo123`
 
----
-
-## 🆓 Free LLM Options (No credit card needed!)
-
-| Provider | Free Tier | Get Key |
-|----------|-----------|---------|
-| Groq | ✅ Fast & free | https://console.groq.com |
-| Google Gemini | ✅ Very generous | https://aistudio.google.com/apikey |
-| OpenRouter | ✅ Multiple free models | https://openrouter.ai |
+### 6. First Audit
+Enter a brand name (e.g., "Burger Hub"), click **"Run GEO Audit"**, and watch the agent analyze visibility across multiple LLMs!
 
 ---
 
-## 📊 Sample Output: Burger Hub Case Study
+## 📸 Screenshots
+![Dashboard](docs/screenshots/dashboard_overview.png)
+*More screenshots available in the [screenshots directory](docs/screenshots/).*
 
-### Before Remediation (`pre_remediation_audit.json`)
-```json
-{
-    "brand_name": "Burger Hub",
-    "is_cited": true,
-    "confidence_score": 0.5,
-    "gaps": [
-        {"gap_type": "Structured Data", "severity": "high"},
-        {"gap_type": "Authority Signals", "severity": "medium"}
-    ]
-}
-```
+---
 
-### After Remediation (`lift_report.json`)
-```json
-{
-    "confidence_score": {
-        "before": 0.5,
-        "after": 0.85,
-        "percentage_lift": "70%"
-    },
-    "gaps": {
-        "before": 2,
-        "after": 0,
-        "resolved": 2
-    }
-}
+## 🗂️ Project Structure
+```text
+GEO-/
+├── geo_upload/               # Main application and demo runner
+│   ├── dashboard.py          # Streamlit UI with authentication
+│   ├── run_baseline.py       # Pre-remediation audit script
+│   ├── deploy_remediation.py # Remediation content generator
+│   ├── measure_lift.py       # Post-audit lift measurement
+│   └── *.json                # Audit state and history files
+├── geo_audit_agent/          # Core Agent Logic
+│   ├── agent.py              # LangGraph state machine (6 nodes)
+│   ├── geo_remediation_tools.py # Content generation tools
+│   └── __init__.py
+├── docs/
+│   └── screenshots/          # Visual assets guide
+├── .env.example              # Configuration template
+├── requirements.txt          # Project dependencies
+└── README.md                 # Project documentation
 ```
 
 ---
 
-## 🛠️ Features & Capabilities
-
-| Capability | What It Does | Module |
-|:--- |:--- |:--- |
-| **Multi-LLM Citation Audit** | Queries multiple AI engines simultaneously to detect brand presence and sentiment. | `run_baseline.py` |
-| **Gap Severity Classification** | Categorizes missing citations as Critical, High, Medium, or Low to prioritize work. | `geo_audit_agent/agent.py` |
-| **JSON-LD Generation** | Creates valid schema.org markup for LocalBusiness, Product, and Organization nodes. | `deploy_remediation.py` |
-| **Technical Whitepapers** | Generates authority-building technical content explaining the brand's proprietary expertise. | `deploy_remediation.py` |
-| **Review Snippet Creation** | Produces ready-to-publish customer social proof to reinforce trust signals. | `deploy_remediation.py` |
-| **Deployment Package** | Outputs WordPress-ready HTML and Markdown instructions for easy implementation. | `deploy_remediation.py` |
-| **Lift Measurement** | Re-audits after deployment and calculates the delta in citation presence scores. | `measure_lift.py` |
-| **Interactive Dashboard** | A secure Streamlit UI for monitoring audits and approving AI-generated content. | `dashboard.py` |
-
----
-
-## 🔧 Customizing the Agent
-
-### Change the brand being audited
-Edit `geo_upload/run_baseline.py`:
-```python
-brand = "Your Brand Name"
-category = "your category"
-city = "Your City"
-```
-
-### Change the LLM model
-Edit `geo_audit_agent/agent.py`:
-```python
-content = call_proxy_llm("gc/gemini-3-flash-preview", messages)
-# Or use: "gpt-4o-mini", "llama-3.1-8b-instant"
-```
-
----
+## 🔴 The Problem: The "AI Invisibility Crisis"
+90% of brands are absent from ChatGPT, Perplexity, and Gemini recommendations because they lack the "authority signals" LLMs require.
 
 ## ⚙️ The Engineering Decisions
-
--   **Why LangGraph?**: It provides a **State Machine** for a deterministic audit → remediate → measure cycle. This ensures the agent doesn't "hallucinate" its way through a campaign; it follows a hardened logic path.
--   **Why Multi-LLM?**: Cross-engine visibility is critical. Relying on a single model introduces bias. We query Gemini, Llama, and GPT to get a consensus "Brand Health" score.
--   **Why JSON-LD?**: This is the "gold standard" for AI visibility. LLMs and Knowledge Graphs ingest structured data more reliably than raw HTML.
--   **Why the Cyclic Pipeline?**: Real GEO is not a one-off. The `baseline -> deploy -> post-audit` loop creates a closed feedback cycle for continuous improvement.
-
----
-
-## 💎 What Makes This Production-Ready
-
--   **Modular Execution**: Each stage (`run_baseline`, `deploy`, `measure_lift`) is a standalone script, allowing for integration into existing CI/CD or marketing stacks.
--   **Structured Logging**: Comprehensive logging via `logging.basicConfig` ensures every LLM call and tool execution is auditable.
--   **Human-in-the-Loop**: The dashboard allows experts to **Approve or Reject** AI-generated content before it touches production.
--   **Error Handling**: Built-in `tenacity` retries with exponential backoff for high-latency API calls.
-
----
-
-## 📖 What You'll Learn From This Codebase
-
--   ✅ LangGraph state machines for agentic workflows
--   ✅ Multi-LLM prompt engineering for structured citation analysis
--   ✅ schema.org JSON-LD generation for AI visibility
--   ✅ Streamlit for rapid AI product prototyping
--   ✅ Real-world GEO campaign design and lift measurement
-
----
-
-## 🐛 Common Issues
-
-| Error | Fix |
-|-------|-----|
-| `AuthenticationError` | Your API key in `.env` is wrong or missing |
-| `ModuleNotFoundError` | Run `pip install -r requirements.txt` |
-| `JSONDecodeError` | LLM returned bad format — check logs and retry |
-| `ImportError` | Make sure you run from the project root directory |
+- **LangGraph**: Used for a deterministic **State Machine** cycle.
+- **Streamlit**: Selected for rapid UI prototyping and Python-native interaction.
+- **JSON-LD**: The standard machine-readable format LLMs use for fact extraction.
 
 ---
 
